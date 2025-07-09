@@ -1,6 +1,6 @@
 #pragma once
 #include "DLL.h"
-
+#include <queue>
 template <typename K, typename V>
 class AVLTree {
 private:
@@ -222,7 +222,7 @@ public:
     void printTree() const {
         if (!root) return;
 
-        std::queue<AVLNode*> q;
+        queue<AVLNode*> q;
         q.push(root);
 
         while (!q.empty()) {

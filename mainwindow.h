@@ -2,6 +2,11 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "appointment.h"
+#include "services.h"
+#include "HT.h"
+#include "DLL.h"
+#include "AVLTree.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -16,6 +21,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void addBook1(Services *usluga);
+    void addBook2(Appointment zapis);
+    void deleteFromBook1(Services usluga);
+    void deleteFromBooks(Appointment zapis);
 
 private:
     Ui::MainWindow *ui;

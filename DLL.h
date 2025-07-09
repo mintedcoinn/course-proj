@@ -1,22 +1,23 @@
+#pragma once
 #include <iostream>
 template <typename T>
 class DLL {
 private:
     struct Node {
         T data;
-        Node<T>* prev;
-        Node<T>* next;
+        Node* prev;
+        Node* next;
         Node(T value) : data(value), prev(nullptr), next(nullptr) {}
     };
 
-    Node<T>* head;
-    Node<T>* tail;
+    Node* head;
+    Node* tail;
 public:
 
     DLL() : head(nullptr), tail(nullptr) {}
     ~DLL() { clear(); }
     DLL(const DLL& other) : head(nullptr), tail(nullptr) {
-        Node<T>* current = other.head;
+        Node* current = other.head;
         while (current) {
             append(current->data);
             current = current->next;
@@ -26,7 +27,7 @@ public:
     DLL& operator=(const DLL& other) {
         if (this != &other) {
             clear();
-            Node<T>* current = other.head;
+            Node* current = other.head;
             while (current) {
                 append(current->data);
                 current = current->next;
@@ -36,7 +37,7 @@ public:
     }
 
     void append(T value) {
-        Node<T>* newNode = new Node(value);
+        Node* newNode = new Node(value);
         if (!head) {
             head = newNode;
             tail = newNode;
@@ -49,7 +50,7 @@ public:
     }
 
     void print() const {
-        Node<T>* current = head;
+        Node* current = head;
         while (current) {
             std::cout << current->data << " ";
             current = current->next;
@@ -58,9 +59,9 @@ public:
     }
 
     void clear() {
-        Node<T>* current = head;
+        Node* current = head;
         while (current) {
-            Node<T>* nextNode = current->next;
+            Node* nextNode = current->next;
             delete current;
             current = nextNode;
         }
@@ -69,10 +70,10 @@ public:
     }
 
     void removeValue(T value) {
-        Node<T>* current = head;
+        Node* current = head;
         while (current) {
             if (current->data == value) {
-                Node<T>* toDelete = current;
+                Node* toDelete = current;
                 if (current->prev) {
                     current->prev->next = current->next;
                 }
@@ -95,7 +96,7 @@ public:
     }
 
     bool find(T value) const {
-        Node<T>* current = head;
+        Node* current = head;
         while (current) {
             if (current->data == value) {
                 return true;

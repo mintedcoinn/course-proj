@@ -11,13 +11,13 @@ class HashTable {
     struct Entry {
         K key;
         V value;
-        int status; // 0 - свободно, 1 - занято
+        int status; // 0 - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, 1 - пїЅпїЅпїЅпїЅпїЅпїЅ
     };
 
     Entry* table;
     int size;
 
-    int hash(const K& key) const {
+    unsigned int hash(const K& key) const {
         unsigned long long h = 0;
         if constexpr (is_same_v<K, int>) {
             string temp_key = to_string(key);
@@ -69,7 +69,7 @@ public:
         return false;
     }
 
-    const V* search(K& key, int& steps) const {
+    bool search(K& key, V& found_value, int& steps= 0) const {
         int h = hash(key);
         steps = 0;
 
@@ -77,13 +77,13 @@ public:
             steps++;
             int idx = line_adresation(h, i);
 
-            if (table[idx].status == 0) return nullptr;
+            if (table[idx].status == 0) return false;
             if (table[idx].status == 1 && table[idx].key == key) {
-                cout << "Найдено в ячейке: " << idx << endl;
-                return &table[idx].value;
+                found_value = table[idx].value;
+                return true;
             }
         }
-        return nullptr;
+        return false;
     }
 
     bool remove(K& key) {
@@ -116,7 +116,7 @@ public:
     void print() const {
         for (int i = 0; i < size; ++i) {
             if (table[i].status == 1) {
-                cout << "Ячейка " << i << ":\n";
+                cout << "пїЅпїЅпїЅпїЅпїЅпїЅ " << i << ":\n";
                 table[i].value.print();
             }
         }

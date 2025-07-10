@@ -9,12 +9,13 @@ private:
         Node* next;
         Node(T value) : data(value), prev(nullptr), next(nullptr) {}
     };
-
+    int node_count;
     Node* head;
     Node* tail;
 public:
 
-    DLL() : head(nullptr), tail(nullptr) {}
+    DLL() : head(nullptr), tail(nullptr), node_count(0){
+    }
     ~DLL() { clear(); }
     DLL(const DLL& other) : head(nullptr), tail(nullptr) {
         Node* current = other.head;
@@ -47,6 +48,7 @@ public:
             newNode->prev = tail;
             tail = newNode;
         }
+        node_count++;
     }
 
     void print() const {
@@ -67,6 +69,7 @@ public:
         }
         head = nullptr;
         tail = nullptr;
+        node_count = 0;
     }
 
     void removeValue(T value) {
@@ -93,6 +96,7 @@ public:
                 current = current->next;
             }
         }
+        node_count--;
     }
 
     bool find(T value) const {
@@ -104,5 +108,16 @@ public:
             current = current->next;
         }
         return false;
+    }
+    
+    int getNodeCount(){
+        return node_count;
+    }
+    Node* getHead(){
+        return head;
+    }
+
+    bool isEmpty(){
+        return (head->next == tail && tail->prev == head);
     }
 };

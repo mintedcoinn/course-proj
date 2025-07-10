@@ -1,13 +1,14 @@
 #ifndef APPOINTMENT_H
 #define APPOINTMENT_H
 #include <QString>
+#include <QDate>
 class Appointment
 {
 public:
     QString  service_name;
     QString  customer;
     QString  executer;
-    int date;
+    QDate date;
     int id;
 
     Appointment();

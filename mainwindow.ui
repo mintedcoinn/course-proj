@@ -29,6 +29,18 @@
          <enum>Qt::Horizontal</enum>
         </property>
         <widget class="QFrame" name="frame_4">
+         <property name="minimumSize">
+          <size>
+           <width>200</width>
+           <height>100</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>16777215</height>
+          </size>
+         </property>
          <property name="frameShape">
           <enum>QFrame::StyledPanel</enum>
          </property>
@@ -140,7 +152,7 @@
            <string>Цена услуги</string>
           </property>
          </widget>
-         <widget class="QPlainTextEdit" name="CustomerName">
+         <widget class="QPlainTextEdit" name="customerName">
           <property name="geometry">
            <rect>
             <x>110</x>
@@ -149,11 +161,23 @@
             <height>21</height>
            </rect>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777212</height>
+           </size>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
           <property name="undoRedoEnabled">
            <bool>true</bool>
           </property>
          </widget>
-         <widget class="QPlainTextEdit" name="ServisePrice">
+         <widget class="QPlainTextEdit" name="servisePrice">
           <property name="geometry">
            <rect>
             <x>110</x>
@@ -164,6 +188,12 @@
           </property>
           <property name="acceptDrops">
            <bool>true</bool>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
          </widget>
          <widget class="QLabel" name="label_8">
@@ -192,7 +222,7 @@
            <string>Конец периода</string>
           </property>
          </widget>
-         <widget class="QDateEdit" name="StarPeriod">
+         <widget class="QDateEdit" name="startPeriod">
           <property name="geometry">
            <rect>
             <x>110</x>
@@ -200,6 +230,25 @@
             <width>131</width>
             <height>25</height>
            </rect>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="specialValueText">
+           <string/>
+          </property>
+          <property name="dateTime">
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>2000</year>
+            <month>1</month>
+            <day>1</day>
+           </datetime>
+          </property>
+          <property name="displayFormat">
+           <string>dd.MMM.yyyy</string>
           </property>
          </widget>
          <widget class="QDateEdit" name="endPeriod">
@@ -210,6 +259,12 @@
             <width>131</width>
             <height>25</height>
            </rect>
+          </property>
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::NoButtons</enum>
+          </property>
+          <property name="displayFormat">
+           <string>dd.MMM.yyyy</string>
           </property>
          </widget>
         </widget>
@@ -233,7 +288,7 @@
            <string>Отчет</string>
           </property>
          </widget>
-         <widget class="QTableWidget" name="tableWidget_3">
+         <widget class="QTableWidget" name="resultsTable">
           <property name="geometry">
            <rect>
             <x>0</x>
@@ -294,7 +349,7 @@
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <widget class="QPlainTextEdit" name="plainTextEdit_2">
+        <widget class="QPlainTextEdit" name="stepCounter">
          <property name="geometry">
           <rect>
            <x>130</x>
@@ -320,7 +375,7 @@
           <string>Количество Шагов:</string>
          </property>
         </widget>
-        <widget class="QTableWidget" name="Results">
+        <widget class="QTableWidget" name="Finded">
          <property name="geometry">
           <rect>
            <x>0</x>
@@ -352,105 +407,105 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="fileMenu">
     <property name="title">
      <string>Файл</string>
     </property>
-    <addaction name="action_1"/>
-    <addaction name="action_2"/>
-    <addaction name="action"/>
+    <addaction name="openBook1Action"/>
+    <addaction name="openBook2Action"/>
+    <addaction name="savwFileAction"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="addMenu">
     <property name="title">
      <string>Добавить</string>
     </property>
-    <addaction name="action_10"/>
-    <addaction name="action_11"/>
+    <addaction name="addBook1Action"/>
+    <addaction name="addBook2Action"/>
    </widget>
-   <widget class="QMenu" name="menu_3">
+   <widget class="QMenu" name="deleteMenu">
     <property name="title">
      <string>Удалить</string>
     </property>
-    <addaction name="action_8"/>
-    <addaction name="action_9"/>
+    <addaction name="deleteBook1Action"/>
+    <addaction name="deleteBook2Action"/>
    </widget>
-   <widget class="QMenu" name="menu_4">
+   <widget class="QMenu" name="printMenu">
     <property name="title">
      <string>Вывести</string>
     </property>
-    <addaction name="action_5"/>
-    <addaction name="action_6"/>
-    <addaction name="action_7"/>
+    <addaction name="printHTAction"/>
+    <addaction name="printAppointmentTree"/>
+    <addaction name="printDateTree"/>
    </widget>
-   <widget class="QMenu" name="menu_5">
+   <widget class="QMenu" name="findMenu">
     <property name="title">
      <string>Найти</string>
     </property>
-    <addaction name="action_3"/>
-    <addaction name="action_4"/>
+    <addaction name="findBook1Action"/>
+    <addaction name="findBook2Action"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
-   <addaction name="menu_5"/>
-   <addaction name="menu_3"/>
-   <addaction name="menu_4"/>
+   <addaction name="fileMenu"/>
+   <addaction name="addMenu"/>
+   <addaction name="findMenu"/>
+   <addaction name="deleteMenu"/>
+   <addaction name="printMenu"/>
   </widget>
-  <action name="action_1">
+  <action name="openBook1Action">
    <property name="text">
     <string>Открыть спр1</string>
    </property>
   </action>
-  <action name="action_2">
+  <action name="openBook2Action">
    <property name="text">
     <string>Открыть спр2</string>
    </property>
   </action>
-  <action name="action">
+  <action name="savwFileAction">
    <property name="text">
     <string>Сохранить отчет</string>
    </property>
   </action>
-  <action name="action_3">
+  <action name="findBook1Action">
    <property name="text">
     <string>Спр1</string>
    </property>
   </action>
-  <action name="action_4">
+  <action name="findBook2Action">
    <property name="text">
     <string>Спр2</string>
    </property>
   </action>
-  <action name="action_5">
+  <action name="printHTAction">
    <property name="text">
     <string>Хэш-таблица</string>
    </property>
   </action>
-  <action name="action_6">
+  <action name="printAppointmentTree">
    <property name="text">
     <string>Дерево записей</string>
    </property>
   </action>
-  <action name="action_7">
+  <action name="printDateTree">
    <property name="text">
     <string>Дерево дат</string>
    </property>
   </action>
-  <action name="action_8">
+  <action name="deleteBook1Action">
    <property name="text">
     <string>Спр1</string>
    </property>
   </action>
-  <action name="action_9">
+  <action name="deleteBook2Action">
    <property name="text">
     <string>Спр2</string>
    </property>
   </action>
-  <action name="action_10">
+  <action name="addBook1Action">
    <property name="text">
     <string>Спр1</string>
    </property>
   </action>
-  <action name="action_11">
+  <action name="addBook2Action">
    <property name="text">
     <string>Спр2</string>
    </property>

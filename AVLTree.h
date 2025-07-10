@@ -125,14 +125,14 @@ private:
         return node;
     }
 
-    AVLNode* remove(AVLNode* node, K key) {
+    AVLNode* removeN(AVLNode* node, K key) {
         if (!node) return nullptr;
 
         if (key < node->key) {
-            node->left = remove(node->left, key);
+            node->left = removeN(node->left, key);
         }
         else if (key > node->key) {
-            node->right = remove(node->right, key);
+            node->right = removeN(node->right, key);
         }
         else {
             if (!node->left || !node->right) {
@@ -154,7 +154,69 @@ private:
                 node->key = successor->key;
                 node->list = successor->list;
 
-                node->right = remove(node->right, successor->key);
+                node->right = removeN(node->right, successor->key);
+            }
+        }
+         updateHeight(node);
+        int balance = getBalance(node);
+
+        if (balance > 1 && getBalance(node->left) >= 0) {
+            return rotateRight(node);
+        }
+        if (balance > 1 && getBalance(node->left) < 0) {
+            node->left = rotateLeft(node->left);
+            return rotateRight(node);
+        }
+        if (balance < -1 && getBalance(node->right) <= 0) {
+            return rotateLeft(node);
+        }
+        if (balance < -1 && getBalance(node->right) > 0) {
+            node->right = rotateRight(node->right);
+            return rotateLeft(node);
+        }
+
+        return node;
+    }
+
+        AVLNode* removeV(AVLNode* node, K key, V value) {
+        if (!node) return nullptr;
+
+        if (key < node->key) {
+            node->left = removeV(node->left, key, value);
+        }
+        else if (key > node->key) {
+            node->right = removeV(node->right, key, value);
+        }
+        else {
+            if (!node->list.find(value)) return node;
+            else
+            {
+                node->list.removeValue(value);
+                if (node->list.getNodeCount()!=0) return node;
+                else
+                {
+                    if (!node->left || !node->right) {
+                        AVLNode* temp = node->left ? node->left : node->right;
+
+                        if (!temp) {
+                            delete node;
+                            return nullptr;
+                        }
+                        else {
+                            temp->parent = node->parent;
+                            delete node;
+                            return temp;
+                        }
+                    }
+                    else {
+                        AVLNode* successor = findMin(node->right);
+
+                        node->key = successor->key;
+                        node->list = successor->list;
+
+                        node->right = removeN(node->right, successor->key);
+                        }
+                    }
             }
         }
 
@@ -191,15 +253,19 @@ public:
     AVLTree() : root(nullptr) {}
     ~AVLTree() { clear(root); }
 
-    void insert(K key, V value) {
+    void insertValue(K key, V value) {
         root = insert(root, key, value, nullptr);
     }
 
-    void remove(K key) {
-        root = remove(root, key);
+    void removeNode(K key) {
+        root = removeN(root, key);
+    }
+    
+    void removeValue(K key, V value){
+        root = removeV(root, key, value);
     }
 
-    DLL<V>* find(K key) const {
+    bool find(K key, DLL<V> &value) const {
         AVLNode* current = root;
         while (current) {
             if (key < current->key) {
@@ -209,10 +275,27 @@ public:
                 current = current->right;
             }
             else {
-                return &(current->list);
+                return true;
             }
         }
-        return nullptr;
+        return false;
+    }
+
+    void checkAndDeleteValueInTree(V value){
+        if (!root) return;
+        queue<AVLNode*> q;
+        q.push(root);
+        while (!q.empty()){
+                AVLNode* current = q.front();
+                q.pop();
+                if (current->list.find(value)){
+                    removeValue(current->key, value);
+                    return;
+                }
+
+                if (current->left) q.push(current->left);
+                if (current->right) q.push(current->right);
+        }
     }
 
     bool contains(K key) const {

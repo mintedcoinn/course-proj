@@ -40,7 +40,7 @@ else()
             ${PROJECT_SOURCES}
             services.h services.cpp
             appointment.h appointment.cpp
-            input_window.h input_window.cpp input_window.ui
+
         )
     endif()
 endif()

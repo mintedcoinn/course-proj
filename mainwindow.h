@@ -9,6 +9,7 @@
 #include "DLL.h"
 #include "AVLTree.h"
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -27,8 +28,10 @@ public:
     bool deleteFromBook1(Services &value);
     bool deleteFromBook2(Appointment &value);
     int searchInBook(QTableWidget&book,int column, int desired_id);
+private slots:
 
 private:
     Ui::MainWindow *ui;
+  //  input_book1_window *input_ui;
 };
 #endif // MAINWINDOW_H

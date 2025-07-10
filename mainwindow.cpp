@@ -48,6 +48,7 @@ bool MainWindow::addBook2(Appointment &value){
     date_tree.insertValue(value.date,value.id);
     return true;
 }
+
 bool MainWindow::deleteFromBook1(Services &value){
     int idInBook = ht.search(value.service_name,found_id, step_counter);
     if (!idInBook)return false;
@@ -65,13 +66,14 @@ bool MainWindow::deleteFromBook2(Appointment &value){
     DLL<int> idInNode;
     if (!appointment_tree.find(value.service_name,idInNode)) return false;
 
-    int rowInBook = searchInBook(*ui->Book2, 3, idInBook);
     while (!idInNode.isEmpty()){
+       int rowInBook = searchInBook(*ui->Book2, 3, idInNode.getHead()->data);
+        ui->Book1->removeRow(rowInBook);
         date_tree.checkAndDeleteValueInTree(idInNode.getHead()->data);
     }
 
     appointment_tree.removeNode(value.service_name);
-    ui->Book1->removeRow(rowInBook);
+
     return true;
 }
 

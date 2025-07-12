@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <type_traits>
+#include <QString>
 
 using namespace std;
 template <typename K, typename V>
@@ -11,7 +12,7 @@ class HashTable {
     struct Entry {
         K key;
         V value;
-        int status; // 0 - ��������, 1 - ������
+        int status;
     };
 
     Entry* table;
@@ -23,8 +24,9 @@ class HashTable {
             string temp_key = to_string(key);
             for (char c : key) h = h * 31 + c;
         }
-        else if constexpr (is_same_v<K, string>) {
-            for (char c : key) h = h * 31 + c;
+        else if constexpr (is_same_v<K, QString>) {
+            string temp = key.toStdString();
+            for (char c : temp) h = h * 31 + c;
         }
         h *= h;        
         string s = to_string(h);
@@ -52,7 +54,7 @@ public:
     }
 
     bool insert(const V& value, const K& key) {
-        int h = hash(key);
+        unsigned int h = hash(key);
 
         for (int i = 0; i < size; ++i) {
             int idx = line_adresation(h, i);
@@ -70,9 +72,9 @@ public:
     }
 
     bool search(K& key, V& found_value, int& steps= 0) const {
-        int h = hash(key);
+        unsigned int h = hash(key);
         steps = 0;
-
+        found_value = -1;
         for (int i = 0; i < size; ++i) {
             steps++;
             int idx = line_adresation(h, i);
@@ -86,24 +88,26 @@ public:
         return false;
     }
 
-    bool remove(K& key) {
-        int h = hash(key);
+    bool remove(K& key, V&value) {
+        unsigned int h = hash(key);
 
         for (int i = 0; i < size; ++i) {
             int idx = line_adresation(h, i);
 
             if (table[idx].status == 0) return false;
 
-            if (table[idx].status == 1 && table[idx].key == key) {
+            if (table[idx].status == 1 && table[idx].key == key && table[idx].value == value) {
                 table[idx].status = 0;
 
                 for (int jdx = size - 1; jdx > idx; jdx--) {
-                    //int jdx = line_adresation(h, j);
+
                     if (table[jdx].status == 1 && hash(table[jdx].key) == h) {
-                        table[idx].key = table[jdx].key;
-                        table[idx].value = table[jdx].value;
+                        table[idx].key = move(table[jdx].key);
+                        table[idx].value = move(table[jdx].value);
                         table[idx].status = 1;
                         table[jdx].status = 0;
+                        table[jdx].key = K{};
+                        table[jdx].value = V{};
                     }
                 }
                 return true;

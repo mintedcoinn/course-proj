@@ -92,6 +92,12 @@
            <property name="horizontalScrollBarPolicy">
             <enum>Qt::ScrollBarAsNeeded</enum>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <attribute name="horizontalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
            <attribute name="horizontalHeaderStretchLastSection">
             <bool>true</bool>
            </attribute>
@@ -99,7 +105,7 @@
             <bool>false</bool>
            </attribute>
            <attribute name="verticalHeaderStretchLastSection">
-            <bool>true</bool>
+            <bool>false</bool>
            </attribute>
           </widget>
          </item>
@@ -155,11 +161,20 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="editTriggers">
+            <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <attribute name="horizontalHeaderCascadingSectionResizes">
+            <bool>true</bool>
+           </attribute>
+           <attribute name="horizontalHeaderStretchLastSection">
+            <bool>true</bool>
+           </attribute>
           </widget>
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget">
         <layout class="QVBoxLayout" name="verticalLayout" stretch="3,1,10">
          <item>
           <widget class="QFrame" name="frame_6">
@@ -294,7 +309,7 @@
                 <second>0</second>
                 <year>1999</year>
                 <month>12</month>
-                <day>31</day>
+                <day>29</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -414,7 +429,17 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="resultsTable"/>
+             <widget class="QTableWidget" name="resultsTable">
+              <property name="editTriggers">
+               <set>QAbstractItemView::NoEditTriggers</set>
+              </property>
+              <attribute name="horizontalHeaderCascadingSectionResizes">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="horizontalHeaderStretchLastSection">
+               <bool>true</bool>
+              </attribute>
+             </widget>
             </item>
            </layout>
           </widget>
@@ -422,7 +447,7 @@
         </layout>
        </widget>
       </widget>
-      <widget class="QWidget" name="">
+      <widget class="QWidget" name="layoutWidget">
        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="5,3">
         <item>
          <widget class="QFrame" name="frame">
@@ -573,7 +598,17 @@
             </layout>
            </item>
            <item>
-            <widget class="QTableWidget" name="Finded"/>
+            <widget class="QTableWidget" name="Finded">
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+            </widget>
            </item>
           </layout>
          </widget>

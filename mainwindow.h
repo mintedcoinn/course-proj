@@ -3,12 +3,15 @@
 
 #include <QMainWindow>
 #include <QTableWidget>
+#include <QAction>
+#include <QDate>
 #include "appointment.h"
 #include "services.h"
 #include "HT.h"
 #include "DLL.h"
 #include "AVLTree.h"
-
+#include "inputdialogbook1.h"
+#include "inputdialogbook2.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,10 +31,17 @@ public:
     bool deleteFromBook1(Services &value);
     bool deleteFromBook2(Appointment &value);
     int searchInBook(QTableWidget&book,int column, int desired_id);
-private slots:
 
+private slots:
+    void openInputDialogBook1();
+    void openInputDialogBook2();
+    void openInpDelDialogBook1();
+    void openInpDelDialogBook2();
 private:
     Ui::MainWindow *ui;
-  //  input_book1_window *input_ui;
+    QAction *addBook1Action;
+    QAction *addBook2Action;
+    QAction *deleteBook1Action;
+    QAction *deleteBook2Action;
 };
 #endif // MAINWINDOW_H

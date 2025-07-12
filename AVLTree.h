@@ -275,6 +275,7 @@ public:
                 current = current->right;
             }
             else {
+                value = current->list;
                 return true;
             }
         }

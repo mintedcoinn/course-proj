@@ -118,6 +118,6 @@ public:
     }
 
     bool isEmpty(){
-        return (head->next == tail && tail->prev == head);
+        return node_count==0;
     }
 };

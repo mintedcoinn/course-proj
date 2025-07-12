@@ -20,6 +20,7 @@ public:
     QString getExecuterInput();
     QDate getDateInput();
     void usingAsDelInput();
+    void usingAsFindInput();
 private slots:
 
     void on_OKButton_clicked();
@@ -27,7 +28,8 @@ private slots:
     void on_BackButton_clicked();
 
 private:
-    bool fields_hided = false;
+    bool fields_hided_del = false;
+    bool fields_hided_find = false;
     Ui::InputDialogBook2 *ui;
     QString service_input;
     QString customer_input;

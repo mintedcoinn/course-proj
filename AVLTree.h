@@ -265,9 +265,11 @@ public:
         root = removeV(root, key, value);
     }
 
-    bool find(K key, DLL<V> &value) const {
+    bool find(K key, DLL<V> &value, int* step_counter=nullptr) const {
         AVLNode* current = root;
+        if (step_counter) *step_counter = 0;
         while (current) {
+            if (step_counter) (*step_counter)++;
             if (key < current->key) {
                 current = current->left;
             }

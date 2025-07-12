@@ -21,7 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->Book1->setColumnCount(4);
     ui->Book1->setHorizontalHeaderLabels({"Услуга", "Цена", "Длительность", "ID"});
     ui->Book2->setColumnCount(5);
-    ui->Book2->setHorizontalHeaderLabels({"Услуга", "Клиент", "Исполнитель", "Дата", "ID"});
+    ui->Book2->setHorizontalHeaderLabels({"Услуга", "Клиент", "Мастер", "Дата", "ID"});
+
 
     addBook1Action = ui->addBook1Action;
     connect(addBook1Action,&QAction::triggered,this,&MainWindow::openInputDialogBook1);
@@ -31,8 +32,17 @@ MainWindow::MainWindow(QWidget *parent)
     connect(deleteBook1Action,&QAction::triggered,this,&MainWindow::openInpDelDialogBook1);
     deleteBook2Action = ui->deleteBook2Action;
     connect(deleteBook2Action,&QAction::triggered,this,&MainWindow::openInpDelDialogBook2);
-
+    findBook1Action = ui->findBook1Action;
+    connect(findBook1Action,&QAction::triggered,this,&MainWindow::openInpFinDialogBook1);
+    findBook2Action = ui->findBook2Action;
+    connect(findBook2Action,&QAction::triggered,this,&MainWindow::openInpFinDialogBook2);
 }
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
 bool MainWindow::addBook1(Services &value)
 {
     if (ht.search(value.service_name,found_id, step_counter))return false;
@@ -95,9 +105,7 @@ bool MainWindow::deleteFromBook2(Appointment &value){
             date_tree.checkAndDeleteValueInTree(idInNode.getHead()->data);
             idInNode.removeValue(idInNode.getHead()->data);
         }
-
         appointment_tree.removeNode(value.service_name);
-
     }
 
     else
@@ -130,6 +138,61 @@ int MainWindow::searchInBook(QTableWidget&book,int column, int desired_id) {
     return -1;
 }
 
+bool MainWindow::searchAndPrintBook1(Services &value){
+    int idInBook = 0;
+    ht.search(value.service_name,idInBook, step_counter);
+    if (idInBook<0) return false;
+
+    ui->stepCounter_2->setPlainText(QString::number(step_counter));
+    ui->FindedBook1->clear();
+    ui->FindedBook1->setRowCount(0);
+
+    ui->FindedBook1->setColumnCount(4);
+    ui->FindedBook1->setHorizontalHeaderLabels({"Услуга", "Цена", "Длительность", "ID"});
+    int rowInBook = searchInBook(*ui->Book1, 3, idInBook);
+
+    int current_row = ui->FindedBook1->rowCount();
+    ui->FindedBook1->insertRow(current_row);
+
+    ui->FindedBook1->setItem(current_row,0, ui->Book1->item(rowInBook, 0)->clone());
+    ui->FindedBook1->setItem(current_row,1 ,ui->Book1->item(rowInBook, 1)->clone());
+    ui->FindedBook1->setItem(current_row,2, ui->Book1->item(rowInBook, 2)->clone());
+    ui->FindedBook1->setItem(current_row,3, ui->Book1->item(rowInBook, 3)->clone());
+    return true;
+}
+
+bool MainWindow::searchAndPrintBook2(Appointment &value){
+    int idInBook = 0;
+    ht.search(value.service_name,idInBook, step_counter);
+    if (idInBook<0) return false;
+
+    DLL<int> idInNode;
+    if (!appointment_tree.find(value.service_name,idInNode,&step_counter)) return false;
+
+    ui->stepCounter_2->setPlainText(QString::number(step_counter));
+
+    ui->FindedBook1->clear();
+    ui->FindedBook1->setRowCount(0);
+
+    ui->FindedBook1->setColumnCount(5);
+    ui->FindedBook1->setHorizontalHeaderLabels({"Услуга", "Клиент", "Мастер", "Дата", "ID"});
+
+    while (!idInNode.isEmpty())
+    {
+        int rowInBook = searchInBook(*ui->Book2, 4, idInNode.getHead()->data);
+        int current_row = ui->FindedBook1->rowCount();
+        ui->FindedBook1->insertRow(current_row);
+        ui->FindedBook1->setItem(current_row,0, ui->Book2->item(rowInBook, 0)->clone());
+        ui->FindedBook1->setItem(current_row,1 ,ui->Book2->item(rowInBook, 1)->clone());
+        ui->FindedBook1->setItem(current_row,2, ui->Book2->item(rowInBook, 2)->clone());
+        ui->FindedBook1->setItem(current_row,3, ui->Book2->item(rowInBook, 3)->clone());
+        ui->FindedBook1->setItem(current_row,4, ui->Book2->item(rowInBook, 4)->clone());
+
+        idInNode.removeValue(idInNode.getHead()->data);
+    }
+    return true;
+}
+
 void MainWindow::openInputDialogBook1(){
     inputDialogBook1 dialog(this);
     if (dialog.exec() == QDialog::Accepted){
@@ -138,7 +201,8 @@ void MainWindow::openInputDialogBook1(){
         new_service.price = dialog.getPriceInput().toInt();
         new_service.duration = dialog.getDurationInput().toInt();
         new_service.id = book1id++;
-        addBook1(new_service);
+        if (!addBook1(new_service))
+            QMessageBox::warning(this, "Ошибка", "Не удалось вставить");
     }
 }
 void MainWindow::openInputDialogBook2(){
@@ -150,7 +214,9 @@ void MainWindow::openInputDialogBook2(){
         new_appointment.executer = dialog.getExecuterInput();
         new_appointment.date = dialog.getDateInput();
         new_appointment.id = book2id++;
-        addBook2(new_appointment);
+
+        if (!addBook2(new_appointment))
+            QMessageBox::warning(this, "Ошибка", "Не удалось вставить");
     }
 }
 void MainWindow::openInpDelDialogBook1(){
@@ -159,7 +225,8 @@ void MainWindow::openInpDelDialogBook1(){
     if (dialog.exec() == QDialog::Accepted){
         Services dele_service;
         dele_service.service_name = dialog.getServiceNameInput();
-        deleteFromBook1(dele_service);
+        if (deleteFromBook1(dele_service))
+            QMessageBox::warning(this, "Ошибка", "Не удалось удалить");
     }
 }
 
@@ -170,10 +237,29 @@ void MainWindow::openInpDelDialogBook2(){
         Appointment dele_appointment;
         dele_appointment.service_name = dialog.getServiceNameInput();
         dele_appointment.id = dialog.getCustomerInput().toInt();
-        deleteFromBook2(dele_appointment);
+        if (! deleteFromBook2(dele_appointment))
+            QMessageBox::warning(this, "Ошибка", "Не удалось удалить");
     }
 }
-MainWindow::~MainWindow()
-{
-    delete ui;
+
+void MainWindow::openInpFinDialogBook1(){
+    inputDialogBook1 dialog(this);
+    dialog.usingAsDelInput();
+    if (dialog.exec() == QDialog::Accepted){
+        Services find_service;
+        find_service.service_name = dialog.getServiceNameInput();
+        if (!searchAndPrintBook1(find_service))
+            QMessageBox::warning(this, "Ошибка", "Не удалось найти");
+    }
+}
+
+void MainWindow::openInpFinDialogBook2(){
+    InputDialogBook2 dialog(this);
+    dialog.usingAsFindInput();
+    if (dialog.exec() == QDialog::Accepted){
+        Appointment find_appointment;
+        find_appointment.service_name = dialog.getServiceNameInput();
+        if (!searchAndPrintBook2(find_appointment))
+            QMessageBox::warning(this, "Ошибка", "Не удалось найти");
+    }
 }

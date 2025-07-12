@@ -89,14 +89,15 @@ public:
                 else {
                     tail = current->prev;
                 }
+
                 current = current->next;
                 delete toDelete;
+                node_count--;
             }
             else {
                 current = current->next;
             }
         }
-        node_count--;
     }
 
     bool find(T value) const {

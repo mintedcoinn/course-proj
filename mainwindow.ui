@@ -275,6 +275,16 @@
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
               </property>
+              <property name="dateTime">
+               <datetime>
+                <hour>0</hour>
+                <minute>0</minute>
+                <second>0</second>
+                <year>2025</year>
+                <month>7</month>
+                <day>14</day>
+               </datetime>
+              </property>
               <property name="displayFormat">
                <string>dd.MMM.yyyy</string>
               </property>
@@ -307,9 +317,9 @@
                 <hour>0</hour>
                 <minute>0</minute>
                 <second>0</second>
-                <year>1999</year>
-                <month>12</month>
-                <day>29</day>
+                <year>2025</year>
+                <month>7</month>
+                <day>14</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -459,7 +469,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>400</width>
+            <width>300</width>
             <height>100</height>
            </size>
           </property>
@@ -512,7 +522,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QFrame" name="frame_7">
+         <widget class="QFrame" name="frame_3">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -521,7 +531,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>300</width>
+            <width>200</width>
             <height>0</height>
            </size>
           </property>
@@ -531,10 +541,7 @@
           <property name="frameShadow">
            <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,10">
-           <property name="spacing">
-            <number>6</number>
-           </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="leftMargin">
             <number>0</number>
            </property>
@@ -548,16 +555,16 @@
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="3,2,1,1">
+            <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="3,2,1,1">
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_11">
                <property name="text">
                 <string>Результат поиска</string>
                </property>
               </widget>
              </item>
              <item>
-              <spacer name="horizontalSpacer">
+              <spacer name="horizontalSpacer_6">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -570,14 +577,14 @@
               </spacer>
              </item>
              <item>
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_12">
                <property name="text">
                 <string>Шагов:</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPlainTextEdit" name="stepCounter">
+              <widget class="QPlainTextEdit" name="stepCounter_2">
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
@@ -598,7 +605,13 @@
             </layout>
            </item>
            <item>
-            <widget class="QTableWidget" name="Finded">
+            <widget class="QTableWidget" name="FindedBook1">
+             <property name="minimumSize">
+              <size>
+               <width>200</width>
+               <height>0</height>
+              </size>
+             </property>
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>

@@ -27,16 +27,29 @@ void InputDialogBook2::on_BackButton_clicked()
 }
 
 bool InputDialogBook2::CheckCorrectInput(){
-    if (fields_hided){
-        if (service_input.trimmed().isEmpty() || customer_input.trimmed().isEmpty()) {
-            QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
-            return false;
+    if (fields_hided_del || fields_hided_find ){
+
+        if (fields_hided_find){
+            if (service_input.trimmed().isEmpty()) {
+                QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
+                return false;
+            }
         }
-        bool ok;
-        int temp =customer_input.toInt(&ok);
-        if (!(ok && temp>=0)){
-            QMessageBox::warning(this, "Ошибка", "ID заполняется целочтсленными значениями не меньше 0");
-            return false;
+
+        else
+        {
+            if (service_input.trimmed().isEmpty() || customer_input.trimmed().isEmpty()) {
+                QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
+                return false;
+            }
+
+
+            bool ok;
+            int temp =customer_input.toInt(&ok);
+            if (!(ok && temp>=0)){
+                QMessageBox::warning(this, "Ошибка", "ID заполняется целочтсленными значениями не меньше 0");
+                return false;
+            }
         }
     }
     else
@@ -55,7 +68,16 @@ void InputDialogBook2::usingAsDelInput(){
     ui->label_4->hide();
     ui->dateInput->hide();
     ui->executerInput->hide();
-    fields_hided = true;
+    fields_hided_del = true;
+}
+void InputDialogBook2::usingAsFindInput(){
+    ui->label_2->hide();
+    ui->label_3->hide();
+    ui->label_4->hide();
+    ui->customerInput->hide();
+    ui->dateInput->hide();
+    ui->executerInput->hide();
+    fields_hided_find = true;
 }
 
 QString InputDialogBook2::getServiceNameInput(){

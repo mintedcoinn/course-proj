@@ -12,7 +12,7 @@
 #include "AVLTree.h"
 #include "inputdialogbook1.h"
 #include "inputdialogbook2.h"
-
+#include <QDebug>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -31,17 +31,23 @@ public:
     bool deleteFromBook1(Services &value);
     bool deleteFromBook2(Appointment &value);
     int searchInBook(QTableWidget&book,int column, int desired_id);
-
+    bool searchAndPrintBook1(Services &value);
+    bool searchAndPrintBook2(Appointment &value);
 private slots:
     void openInputDialogBook1();
     void openInputDialogBook2();
     void openInpDelDialogBook1();
     void openInpDelDialogBook2();
+    void openInpFinDialogBook1();
+    void openInpFinDialogBook2();
+
 private:
     Ui::MainWindow *ui;
     QAction *addBook1Action;
     QAction *addBook2Action;
     QAction *deleteBook1Action;
     QAction *deleteBook2Action;
+    QAction *findBook1Action;
+    QAction *findBook2Action;
 };
 #endif // MAINWINDOW_H

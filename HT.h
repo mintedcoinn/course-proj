@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <type_traits>
 #include <QString>
+#include <QVariant>
+#include <QQueue>
 
 using namespace std;
 template <typename K, typename V>
@@ -21,15 +23,11 @@ class HashTable {
 
     unsigned int hash(const K& key) const {
         unsigned long long h = 0;
-        if constexpr (is_same_v<K, int>) {
-            string temp_key = to_string(key);
-            for (char c : key) h = h * 31 + c;
+        QString temp = QVariant::fromValue(key).toString();
+        for (const QChar& c : temp) {
+            h = h * 31 + static_cast<unsigned long long>(c.unicode());
         }
-        else if constexpr (is_same_v<K, QString>) {
-            string temp = key.toStdString();
-            for (char c : temp) h = h * 31 + c;
-        }
-        h *= h;        
+        h *= h;
         string s = to_string(h);
         int mid = s.length() / 2;
         string part = s.substr(mid - 1, 3);
@@ -86,6 +84,8 @@ public:
         swap(first.table, second.table);
     }
 
+    QQueue<QString>loger;
+
     bool insert(const V& value, const K& key) {
         unsigned int h = hash(key);
 
@@ -94,17 +94,20 @@ public:
 
             if (table[idx].status == 0) {
                 table[idx] = {key, value, 1 };
+                loger.enqueue(QString("HashTable insert: insert key: %1 value: %2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
                 return true;
             }
 
             if (table[idx].key == key) {
+                loger.enqueue(QString("HashTable insert: key %1 already exist").arg(QVariant::fromValue(key).toString()));
                 return false;
             }
         }
+         loger.enqueue(QString("HashTable insert: insert failure (table overload)").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
-    bool search(K& key, V* found_value = nullptr, int* steps= nullptr) const {
+    bool search(K& key, V* found_value = nullptr, int* steps= nullptr) {
         unsigned int h = hash(key);
         if (steps) *steps = 0;
          if (found_value) *found_value = -1;
@@ -112,12 +115,17 @@ public:
             if (steps)*steps++;
             int idx = line_adresation(h, i);
 
-            if (table[idx].status == 0) return false;
+            if (table[idx].status == 0) {
+                loger.enqueue(QString("HashTable search: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+                return false;
+            }
             if (table[idx].status == 1 && table[idx].key == key) {
                 if (found_value) *found_value = table[idx].value;
+                 loger.enqueue(QString("HashTable search: key: %1 found").arg(QVariant::fromValue(key).toString()));
                 return true;
             }
         }
+        loger.enqueue(QString("HashTable search: key: %1 not found").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -127,7 +135,10 @@ public:
         for (int i = 0; i < size; ++i) {
             int idx = line_adresation(h, i);
 
-            if (table[idx].status == 0) return false;
+            if (table[idx].status == 0) {
+                 loger.enqueue(QString("HashTable remove: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+                return false;
+            }
 
             if (table[idx].status == 1 && table[idx].key == key && table[idx].value == value) {
                 table[idx].status = 0;
@@ -143,9 +154,11 @@ public:
                         table[jdx].value = V{};
                     }
                 }
+                loger.enqueue(QString("HashTable remove: key: %1 value: %2 removed succsessfull").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
                 return true;
             }
         }
+        loger.enqueue(QString("HashTable remove: key: %1 not found").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -153,7 +166,7 @@ public:
     void print() const {
         for (int i = 0; i < size; ++i) {
             if (table[i].status == 1) {
-                cout << "������ " << i << ":\n";
+                cout << " " << i << ":\n";
                 table[i].value.print();
             }
         }

@@ -14,7 +14,6 @@ class HT_input : public QDialog
 public:
     explicit HT_input(QWidget *parent = nullptr);
     ~HT_input();
-
     int getTableSize() const;
 
 private slots:
@@ -22,6 +21,7 @@ private slots:
 
 private:
     Ui::HT_input *ui;
+
 };
 
 #endif // HT_INPUT_H

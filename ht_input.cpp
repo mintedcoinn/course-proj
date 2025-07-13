@@ -9,7 +9,6 @@ HT_input::HT_input(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->lineEdit->setValidator(new QIntValidator(1, 10000, this));
     ui->lineEdit->setPlaceholderText("Введите число 1-10000");
 }
 
@@ -29,4 +28,11 @@ void HT_input::on_pushButton_clicked()
         QMessageBox::warning(this, "Ошибка", "Введите размер таблицы");
         return;
     }
-    accept();}
+    bool ok;
+    int temp  = ui->lineEdit->text().toInt(&ok);
+    if (!(ok && temp >0)) {
+        QMessageBox::warning(this, "Ошибка", "Размер таблицы должен быть положительным");
+        return;
+    }
+    accept();
+}

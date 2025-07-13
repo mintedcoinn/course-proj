@@ -1,6 +1,9 @@
 #pragma once
 #include "DLL.h"
 #include <queue>
+#include <QString>
+#include <QVariant>
+#include <QQueue>
 template <typename K, typename V>
 class AVLTree {
 private:
@@ -19,6 +22,7 @@ private:
     };
 
     AVLNode* root;
+
 
     int getHeight(AVLNode* node) const {
         return node ? node->height : 0;
@@ -253,19 +257,24 @@ public:
     AVLTree() : root(nullptr) {}
     ~AVLTree() { clear(root); }
 
+    QQueue<QString>loger;
+
     void insertValue(K key, V value) {
         root = insert(root, key, value, nullptr);
+        loger.enqueue(QString("AVLTree insert: insert Node: %1 value:%2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
     }
 
     void removeNode(K key) {
         root = removeN(root, key);
+        loger.enqueue(QString("AVLTree remove: remove Node: %1").arg(QVariant::fromValue(key).toString()));
     }
     
     void removeValue(K key, V value){
         root = removeV(root, key, value);
+        loger.enqueue(QString("AVLTree remove: remove value: %1 from Node: %2").arg(QVariant::fromValue(value).toString()).arg(QVariant::fromValue(key).toString()));
     }
 
-    bool find(K key, DLL<V> &value, int* step_counter=nullptr) const {
+    bool find(K key, DLL<V> &value, int* step_counter=nullptr) {
         AVLNode* current = root;
         if (step_counter) *step_counter = 0;
         while (current) {
@@ -278,9 +287,11 @@ public:
             }
             else {
                 value = current->list;
+                loger.enqueue(QString("AVLTree search: Node %1 found").arg(QVariant::fromValue(key).toString()));
                 return true;
             }
         }
+        loger.enqueue(QString("AVLTree search:  Node %1 not found").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -301,14 +312,10 @@ public:
         }
     }
 
-    bool contains(K key) const {
-        return find(key) != nullptr;
-    }
-
     void printTree() const {
         if (!root) return;
 
-        queue<AVLNode*> q;
+        std::queue<AVLNode*> q;
         q.push(root);
 
         while (!q.empty()) {

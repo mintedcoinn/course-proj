@@ -1,5 +1,8 @@
 #pragma once
 #include <iostream>
+#include <QString>
+#include <QQueue>
+#include <QVariant>
 template <typename T>
 class DLL {
 private:
@@ -17,6 +20,7 @@ public:
     DLL() : head(nullptr), tail(nullptr), node_count(0){
     }
     ~DLL() { clear(); }
+    QQueue<QString>loger;
     DLL(const DLL& other) : head(nullptr), tail(nullptr) {
         Node* current = other.head;
         while (current) {
@@ -35,6 +39,7 @@ public:
             }
             this->node_count = other.node_count;
         }
+
         return *this;
     }
 
@@ -49,6 +54,7 @@ public:
             newNode->prev = tail;
             tail = newNode;
         }
+        loger.enqueue(QString("DLL insert: insert value: %1").arg(QVariant::fromValue(value).toString()));
         node_count++;
     }
 
@@ -71,10 +77,12 @@ public:
         head = nullptr;
         tail = nullptr;
         node_count = 0;
+        loger.enqueue(QString("DLL clear: clear succsessfull"));
     }
 
     void removeValue(T value) {
         Node* current = head;
+        bool removed= false;
         while (current) {
             if (current->data == value) {
                 Node* toDelete = current;
@@ -94,21 +102,26 @@ public:
                 current = current->next;
                 delete toDelete;
                 node_count--;
+                loger.enqueue(QString("DLL remove: value: %1 removed").arg(QVariant::fromValue(value).toString()));
+                removed = true;
             }
             else {
                 current = current->next;
             }
         }
+        if (!removed) loger.enqueue(QString("DLL remove: value: %1 not found").arg(QVariant::fromValue(value).toString()));
     }
 
-    bool find(T value) const {
+    bool find(T value)  {
         Node* current = head;
         while (current) {
             if (current->data == value) {
+                loger.enqueue(QString("DLL search: value: %1 found").arg(QVariant::fromValue(value).toString()));
                 return true;
             }
             current = current->next;
         }
+        loger.enqueue(QString("DLL search: value: %1 not found").arg(QVariant::fromValue(value).toString()));
         return false;
     }
     

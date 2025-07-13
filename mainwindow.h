@@ -7,6 +7,7 @@
 #include <QDate>
 #include <QFileDialog>
 #include <QTextCodec>
+#include <QTextStream>
 #include <utility>
 #include "appointment.h"
 #include "services.h"
@@ -16,7 +17,7 @@
 #include "inputdialogbook1.h"
 #include "inputdialogbook2.h"
 #include "ht_input.h"
-#include <QDebug>
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -38,7 +39,8 @@ public:
     bool searchAndPrintBook1(Services &value);
     bool searchAndPrintBook2(Appointment &value);
     void createAndShowReport();
-    //void setHTsize();
+    void setHTsize();
+    void updateLogs();
 
 private slots:
     void openInputDialogBook1();

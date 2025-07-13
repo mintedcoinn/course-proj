@@ -4,6 +4,8 @@
 #include <QString>
 #include <QVariant>
 #include <QQueue>
+#include <QStack>
+#include <QTextStream>
 template <typename K, typename V>
 class AVLTree {
 private:
@@ -261,17 +263,17 @@ public:
 
     void insertValue(K key, V value) {
         root = insert(root, key, value, nullptr);
-        loger.enqueue(QString("AVLTree insert: insert Node: %1 value:%2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
+        loger.enqueue(QString("AVL-дерево: добавлен узел %1 со значением %2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
     }
 
     void removeNode(K key) {
         root = removeN(root, key);
-        loger.enqueue(QString("AVLTree remove: remove Node: %1").arg(QVariant::fromValue(key).toString()));
+        loger.enqueue(QString("AVL-дерево: удалён узел %1").arg(QVariant::fromValue(key).toString()));
     }
     
     void removeValue(K key, V value){
         root = removeV(root, key, value);
-        loger.enqueue(QString("AVLTree remove: remove value: %1 from Node: %2").arg(QVariant::fromValue(value).toString()).arg(QVariant::fromValue(key).toString()));
+        loger.enqueue(QString("AVL-дерево: удалено значение %1 из узла %2").arg(QVariant::fromValue(value).toString()).arg(QVariant::fromValue(key).toString()));
     }
 
     bool find(K key, DLL<V> &value, int* step_counter=nullptr) {
@@ -287,11 +289,11 @@ public:
             }
             else {
                 value = current->list;
-                loger.enqueue(QString("AVLTree search: Node %1 found").arg(QVariant::fromValue(key).toString()));
+                loger.enqueue(QString("AVL-дерево: узел %1 найден").arg(QVariant::fromValue(key).toString()));
                 return true;
             }
         }
-        loger.enqueue(QString("AVLTree search:  Node %1 not found").arg(QVariant::fromValue(key).toString()));
+        loger.enqueue(QString("AVL-дерево: узел %1 не найден").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -311,27 +313,33 @@ public:
                 if (current->right) q.push(current->right);
         }
     }
+    QString printTree() {
+        QString treeContent;
+        QTextStream stream(&treeContent);
+        QString space = "------";
 
-    void printTree() const {
-        if (!root) return;
+        if (!root) {
+            stream << "Tree is empty\n";
+        } else {
+            QStack<AVLNode*> stack;
+            AVLNode* current = root;
 
-        std::queue<AVLNode*> q;
-        q.push(root);
-
-        while (!q.empty()) {
-            int levelSize = q.size();
-            while (levelSize--) {
-                AVLNode* current = q.front();
-                q.pop();
-
-                std::cout << "[" << current->key << "](h:" << current->height << ") ";
-
-                if (current->left) q.push(current->left);
-                if (current->right) q.push(current->right);
+            while (current || !stack.empty()) {
+                while (current) {
+                    stack.push(current);
+                    current = current->right;
+                }
+                current = stack.pop();
+                current == root ? stream << "root ->" : stream << space.repeated(root->height - current->height);
+                stream << "[" << QVariant::fromValue(current->key).toString()
+                       << "] (height:" << current->height << "): "
+                       << current->list.print() << "\n";
+                current = current->left;
             }
-            std::cout << std::endl;
         }
+        return treeContent;
     }
+
     K getRootKey() const {
         return root ? root->key : K{};
     }

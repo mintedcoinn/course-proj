@@ -280,7 +280,7 @@
             <item row="3" column="2">
              <widget class="QDateEdit" name="endPeriod">
               <property name="locale">
-               <locale language="English" country="UnitedStates"/>
+               <locale language="English" country="Austria"/>
               </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
@@ -310,7 +310,7 @@
             <item row="2" column="2">
              <widget class="QDateEdit" name="startPeriod">
               <property name="locale">
-               <locale language="English" country="UnitedStates"/>
+               <locale language="English" country="Austria"/>
               </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
@@ -703,8 +703,8 @@
      <string>Вывести</string>
     </property>
     <addaction name="printHTAction"/>
-    <addaction name="printAppointmentTree"/>
-    <addaction name="printDateTree"/>
+    <addaction name="printAppointmentTreeAction"/>
+    <addaction name="printDateTreeAction"/>
    </widget>
    <widget class="QMenu" name="findMenu">
     <property name="title">
@@ -744,12 +744,12 @@
     <string>Хэш-таблица</string>
    </property>
   </action>
-  <action name="printAppointmentTree">
+  <action name="printAppointmentTreeAction">
    <property name="text">
     <string>Дерево записей</string>
    </property>
   </action>
-  <action name="printDateTree">
+  <action name="printDateTreeAction">
    <property name="text">
     <string>Дерево дат</string>
    </property>

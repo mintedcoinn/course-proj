@@ -52,6 +52,13 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openBook2Action,&QAction::triggered,this,&MainWindow::openFileBook2);
     saveLogsAction = ui->saveLogsAction;
     connect(saveLogsAction,&QAction::triggered,this,&MainWindow::saveLogs);
+    printAppointmentTreeAction = ui->printAppointmentTreeAction;
+    printDateTreeAction = ui->printDateTreeAction;
+    printHTAction = ui->printHTAction;
+    connect(printAppointmentTreeAction,&QAction::triggered,this,&MainWindow::printAppointmentTree);
+    connect(printDateTreeAction,&QAction::triggered,this,&MainWindow::printDateTree);
+    connect(printHTAction,&QAction::triggered,this,&MainWindow::printHT);
+
 }
 
 MainWindow::~MainWindow()
@@ -64,7 +71,7 @@ bool MainWindow::addBook1(Services &value)
     if (ht.search(value.service_name))
     {
         updateLogs();
-        main_loger.enqueue(QString("Book1 insert: insert failure"));
+        main_loger.enqueue(QString("Справочник1: ошибка добавления"));
         updateLogs();
         return false;
     }
@@ -72,7 +79,7 @@ bool MainWindow::addBook1(Services &value)
     if (!(ht.insert(value.id, value.service_name)))
     {
         updateLogs();
-        main_loger.enqueue(QString("Book1 insert: insert failure"));
+        main_loger.enqueue(QString("Справочник1: ошибка добавления"));
         updateLogs();
         return false;
     }
@@ -86,7 +93,7 @@ bool MainWindow::addBook1(Services &value)
     ui->Book1->setItem(current_row,3, new QTableWidgetItem(QString::number(value.id)));
 
     updateLogs();
-    main_loger.enqueue(QString("Book1 insert: insert item with id %1").arg(QVariant::fromValue(value.id).toString()));
+    main_loger.enqueue(QString("Справочник1: добавлена запись с ID %1").arg(QVariant::fromValue(value.id).toString()));
     updateLogs();
     return true;
 }
@@ -95,7 +102,7 @@ bool MainWindow::addBook2(Appointment &value){
     if (!ht.search(value.service_name))
     {
         updateLogs();
-        main_loger.enqueue(QString("Book2 insert: insert failure"));
+        main_loger.enqueue(QString("Справочник2: ошибка добавления"));
         updateLogs();
         return false;
     }
@@ -112,7 +119,7 @@ bool MainWindow::addBook2(Appointment &value){
     date_tree.insertValue(value.date,value.id);
     updateLogs();
 
-    main_loger.enqueue(QString("Book2 insert: insert item with id %1").arg(QVariant::fromValue(value.id).toString()));
+    main_loger.enqueue(QString("Справочник2: добавлена запись с ID %1").arg(QVariant::fromValue(value.id).toString()));
     updateLogs();
     return true;
 }
@@ -122,7 +129,7 @@ bool MainWindow::deleteFromBook1(Services &value){
     ht.search(value.service_name,&idInBook);
     if (idInBook<0)    {
         updateLogs();
-        main_loger.enqueue(QString("Book1 remove: remove failure"));
+        main_loger.enqueue(QString("Справочник1: ошибка удаления"));
         updateLogs();
         return false;
     }
@@ -140,7 +147,7 @@ bool MainWindow::deleteFromBook1(Services &value){
 
     ui->Book1->removeRow(rowInBook);
 
-    main_loger.enqueue(QString("Book1 remove: succsessfull remove value with id %1").arg(QVariant::fromValue(value.id).toString()));
+    main_loger.enqueue(QString("Справочник1: запись с ID %1 удалена").arg(QVariant::fromValue(value.id).toString()));
     updateLogs();
     return true;
 }
@@ -150,7 +157,7 @@ bool MainWindow::deleteFromBook2(Appointment &value){
     ht.search(value.service_name,&idInBook);
     if (idInBook<0)    {
         updateLogs();
-        main_loger.enqueue(QString("Book2 remove: remove failure"));
+        main_loger.enqueue(QString("Справочник2: ошибка удаления"));
         updateLogs();
         return false;
     }
@@ -161,7 +168,7 @@ bool MainWindow::deleteFromBook2(Appointment &value){
         if (!appointment_tree.find(value.service_name,idInNode))
         {
             updateLogs();
-            main_loger.enqueue(QString("Book2 remove: remove failure"));
+            main_loger.enqueue(QString("Справочник2: ошибка удаления"));
             updateLogs();
             return false;
         }
@@ -174,7 +181,7 @@ bool MainWindow::deleteFromBook2(Appointment &value){
             idInNode.removeValue(idInNode.getHead()->data);
             updateLogs();
             ui->Book2->removeRow(rowInBook);
-            main_loger.enqueue(QString("Book2 remove: succsessfull remove value with id %1").arg(QVariant::fromValue(tempId).toString()));
+            main_loger.enqueue(QString("Справочник2: запись с ID %1 удалена").arg(QVariant::fromValue(tempId).toString()));
             updateLogs();
         }
         appointment_tree.removeNode(value.service_name);
@@ -192,7 +199,7 @@ bool MainWindow::deleteFromBook2(Appointment &value){
         date_tree.removeValue(tempDate, value.id);
         updateLogs();
         ui->Book2->removeRow(rowInBook);
-        main_loger.enqueue(QString("Book2 remove: succsessfull remove value with id %1").arg(QVariant::fromValue(value.id).toString()));
+        main_loger.enqueue(QString("Справочник2: запись с ID %1 удалена").arg(QVariant::fromValue(value.id).toString()));
         updateLogs();
     }
     return true;
@@ -208,14 +215,14 @@ int MainWindow::searchInBook(QTableWidget&book,int column, int desired_id) {
             int current_id = item->text().toInt(&ok);
             if (ok && current_id == desired_id) {
 
-                main_loger.enqueue(QString("%1 row search: found value %2 in row %3").arg(QVariant::fromValue(book.objectName()).toString()).arg(QVariant::fromValue(desired_id).toString()).arg(QVariant::fromValue(i).toString()));
+                main_loger.enqueue(QString("Значениу %2 найдено в строке %3").arg(QVariant::fromValue(book.objectName()).toString()).arg(QVariant::fromValue(desired_id).toString()).arg(QVariant::fromValue(i).toString()));
                 updateLogs();
 
                 return i;
             }
         }
     }
-    main_loger.enqueue(QString("%1 row search: search failure").arg(QVariant::fromValue(book.objectName()).toString()));
+    main_loger.enqueue(QString("Поиск по строке справочника провален").arg(QVariant::fromValue(book.objectName()).toString()));
     updateLogs();
     return -1;
 }
@@ -226,7 +233,7 @@ bool MainWindow::searchAndPrintBook1(Services &value){
     ht.search(value.service_name,&idInBook, &step_counter);
     if (idInBook<0)    {
         updateLogs();
-        main_loger.enqueue(QString("Book1 search: search failure"));
+        main_loger.enqueue(QString("Справочник1: запись не найдена"));
         updateLogs();
         return false;
     }
@@ -247,7 +254,7 @@ bool MainWindow::searchAndPrintBook1(Services &value){
     ui->FindedBook1->setItem(current_row,2, ui->Book1->item(rowInBook, 2)->clone());
     ui->FindedBook1->setItem(current_row,3, ui->Book1->item(rowInBook, 3)->clone());
 
-    main_loger.enqueue(QString("Book1 search: search succsessfull"));
+    main_loger.enqueue(QString("Справочник1: поиск завершен"));
     updateLogs();
     return true;
 }
@@ -257,7 +264,7 @@ bool MainWindow::searchAndPrintBook2(Appointment &value){
     ht.search(value.service_name,&idInBook);
     if (idInBook<0)    {
         updateLogs();
-        main_loger.enqueue(QString("Book2 search: search failure"));
+        main_loger.enqueue(QString("Справочник2: запись не найдена"));
         updateLogs();
         return false;
     }
@@ -267,7 +274,7 @@ bool MainWindow::searchAndPrintBook2(Appointment &value){
     if (!appointment_tree.find(value.service_name,idInNode,&step_counter))
     {
         updateLogs();
-        main_loger.enqueue(QString("Book2 remove: remove failure"));
+        main_loger.enqueue(QString("Справочник2: запись не найдена"));
         updateLogs();
         return false;
     }
@@ -290,11 +297,11 @@ bool MainWindow::searchAndPrintBook2(Appointment &value){
         ui->FindedBook1->setItem(current_row,2, ui->Book2->item(rowInBook, 2)->clone());
         ui->FindedBook1->setItem(current_row,3, ui->Book2->item(rowInBook, 3)->clone());
         ui->FindedBook1->setItem(current_row,4, ui->Book2->item(rowInBook, 4)->clone());
-        main_loger.enqueue(QString("FindedBook1 insert: insert item with id %1").arg(QVariant::fromValue(idInNode.getHead()->data).toString()));
+        main_loger.enqueue(QString("Таблица поиска справочника2: вставлен элемент с id =  %1").arg(QVariant::fromValue(idInNode.getHead()->data).toString()));
         idInNode.removeValue(idInNode.getHead()->data);
         updateLogs();
     }
-    main_loger.enqueue(QString("Book2 search: search succsessfull"));
+    main_loger.enqueue(QString("Справочник2: поиск завершен"));
     updateLogs();
     return true;
 }
@@ -308,13 +315,13 @@ void MainWindow::createAndShowReport(){
 
     if (customer.trimmed().isEmpty() || ui->servisePriceReport->toPlainText().trimmed().isEmpty()) {
         QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
-        main_loger.enqueue(QString("Report input: input data failure"));
+        main_loger.enqueue(QString("Отчёт: ошибка ввода данных"));
         updateLogs();
         return;
     }
     if (start_period> end_period){
         QMessageBox::warning(this, "Ошибка", "Начальная дата больше конченой");
-        main_loger.enqueue(QString("Report input: input data failure"));
+        main_loger.enqueue(QString("Отчёт: ошибка ввода данных"));
         updateLogs();
         return;
     }
@@ -322,7 +329,7 @@ void MainWindow::createAndShowReport(){
     if (!ok)
     {
         QMessageBox::warning(this, "Ошибка", "Цена является целочисленным показателем");
-        main_loger.enqueue(QString("Report input: input data failure"));
+        main_loger.enqueue(QString("Отчёт: ошибка ввода данных"));
         updateLogs();
         return;
     }
@@ -396,9 +403,9 @@ void MainWindow::createAndShowReport(){
             ui->reportTable->setItem(current_row, 4, ui->Book2->item(rowInBook2,2)->clone());
             ui->reportTable->setItem(current_row, 5, ui->Book1->item(rowInBook1,2)->clone());
 
-            main_loger.enqueue(QString("Report create: repot case finded  in row %1 in Book1  succsessfull").arg(QVariant::fromValue(rowInBook1).toString()));
-            main_loger.enqueue(QString("Report create: repot case finded  in row %1 in Book2 succsessfull").arg(QVariant::fromValue(rowInBook2).toString()));
-            main_loger.enqueue(QString("Report create: row %1 succsessfully added to report").arg(QVariant::fromValue(current_row).toString()));
+            main_loger.enqueue(QString("Отчёт: случай найден в строке %1 в справочнике1").arg(QVariant::fromValue(rowInBook1).toString()));
+            main_loger.enqueue(QString("Отчёт: случай найден в строке %1 в справочнике1").arg(QVariant::fromValue(rowInBook2).toString()));
+            main_loger.enqueue(QString("Отчёт: добавлена строка %1").arg(QVariant::fromValue(current_row).toString()));
             updateLogs();
         }
         namesFromId.removeValue(namesFromId.getHead()->data);
@@ -406,7 +413,7 @@ void MainWindow::createAndShowReport(){
     }
     namesFromId.clear();
     updateLogs();
-    main_loger.enqueue(QString("Report create: report finished succsessfull"));
+    main_loger.enqueue(QString("Отчёт: создание завершено"));
     updateLogs();
 }
 
@@ -418,11 +425,11 @@ void MainWindow::setHTsize() {
             HashTable<QString, int>temp(size) ;
             ht = temp;
             QMessageBox::information(this, "Успех", QString("Хэш-таблица создана с размером %1").arg(size));
-            main_loger.enqueue(QString("HashTable resize: using size %1").arg(size));
+            main_loger.enqueue(QString("Изменение размера хеш таблицы: используется размер %1").arg(size));
             updateLogs();
         } else {
             QMessageBox::warning(this, "Ошибка", "Размер должен быть положительным");
-            main_loger.enqueue(QString("HashTable resize: resize failure"));
+            main_loger.enqueue(QString("Изменение размера хеш таблицы: ошибка"));
             updateLogs();
             setHTsize();
         }
@@ -533,7 +540,7 @@ void MainWindow::openFileBook1(){
     QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл услуг", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Book1 open file: open failure"));
+        main_loger.enqueue(QString("Файл: ошибка открытия"));
         updateLogs();
         return;
     }
@@ -542,7 +549,7 @@ void MainWindow::openFileBook1(){
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось открыть файл.");
-        main_loger.enqueue(QString("Book1 open file: open failure"));
+        main_loger.enqueue(QString("Файл: ошибка открытия"));
         updateLogs();
         return;
     }
@@ -552,7 +559,7 @@ void MainWindow::openFileBook1(){
     int current_row = 0;
     QTextStream in(&file);
 
-    main_loger.enqueue(QString("Book1 read file: start reading file"));
+    main_loger.enqueue(QString("Файл: начато чтение"));
     updateLogs();
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -566,14 +573,14 @@ void MainWindow::openFileBook1(){
 
             if (!(ok1 && ok2 && service.price >0 && service.duration >0))
             {
-                main_loger.enqueue(QString("Book1 read file: row %1 skipped").arg(QVariant::fromValue(current_row).toString()));
+                main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
                 updateLogs();
                 current_row++;
                 continue;
             }
             if (ht.search(service.service_name))
             {
-                main_loger.enqueue(QString("Book1 read file: row %1 skipped").arg(QVariant::fromValue(current_row).toString()));
+                main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
                 updateLogs();
                 current_row++;
                 continue;
@@ -581,13 +588,19 @@ void MainWindow::openFileBook1(){
             service.id = book1id++;
             addBook1(service);
 
-            main_loger.enqueue(QString("Book1 read file: row %1 added succsessfully").arg(QVariant::fromValue(current_row).toString()));
+            main_loger.enqueue(QString("Файл: обработана строка %1").arg(QVariant::fromValue(current_row).toString()));
             updateLogs();
+        }
+        else{
+            main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
+            updateLogs();
+            current_row++;
+            continue;
         }
         current_row++;
     }
     file.close();
-    main_loger.enqueue(QString("Book1 read file: finish reading file"));
+    main_loger.enqueue(QString("Файл: закончено чтение"));
     updateLogs();
 }
 
@@ -595,7 +608,7 @@ void MainWindow::openFileBook2(){
     QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл записей", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Book2 open file: open failure"));
+        main_loger.enqueue(QString("Файл: ошибка открытия"));
         updateLogs();
         return;
     }
@@ -604,14 +617,14 @@ void MainWindow::openFileBook2(){
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось открыть файл.");
-        main_loger.enqueue(QString("Book2 open file: open failure"));
+        main_loger.enqueue(QString("Файл: ошибка открытия"));
         updateLogs();
         return;
     }
 
     int current_row = 0;
     QTextStream in(&file);
-    main_loger.enqueue(QString("Book2 read file: start reading file"));
+    main_loger.enqueue(QString("Файл: начато чтение"));
     updateLogs();
     while (!in.atEnd()) {
         QString line = in.readLine();
@@ -623,27 +636,33 @@ void MainWindow::openFileBook2(){
             appointment.executer = parts[2].trimmed();
             appointment.date =  QLocale("en_US").toDate(parts[3].trimmed(), "dd.MMM.yyyy");
             if (!appointment.date.isValid()){
-                main_loger.enqueue(QString("Book2 read file: row %1 skipped").arg(QVariant::fromValue(current_row).toString()));
+                main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
                 updateLogs();
                 current_row++;
                 continue;
             }
             if (!ht.search(appointment.service_name))
             {
-                main_loger.enqueue(QString("Book2 read file: row %1 skipped").arg(QVariant::fromValue(current_row).toString()));
+                main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
                 updateLogs();
                 current_row++;
                 continue;
             }
             appointment.id = book2id++;
             addBook2(appointment);
-            main_loger.enqueue(QString("Book2 read file: row %1 added succsessfully").arg(QVariant::fromValue(current_row).toString()));
+            main_loger.enqueue(QString("Файл: обработана строка %1").arg(QVariant::fromValue(current_row).toString()));
             updateLogs();
+        }
+        else{
+            main_loger.enqueue(QString("Файл: пропущена строка %1 (некорректные данные)").arg(QVariant::fromValue(current_row).toString()));
+            updateLogs();
+            current_row++;
+            continue;
         }
         current_row++;
     }
     file.close();
-    main_loger.enqueue(QString("Book2 read file: finish reading file"));
+    main_loger.enqueue(QString("Файл: закончено чтение"));
     updateLogs();
 }
 
@@ -651,7 +670,7 @@ void MainWindow::saveBook1ToFile() {
     QString fileName = QFileDialog::getSaveFileName(this, "Сохранить услуги", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Book1 create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
@@ -660,14 +679,14 @@ void MainWindow::saveBook1ToFile() {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
-        main_loger.enqueue(QString("Book1 create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
 
     QTextStream out(&file);
     out.setCodec("UTF-8");
-    main_loger.enqueue(QString("Book1 write to file: start writing in file"));
+    main_loger.enqueue(QString("Файл: запись начата"));
     updateLogs();
     for (int row = 0; row < ui->Book1->rowCount(); ++row) {
         QString service = ui->Book1->item(row, 0)->text();
@@ -677,12 +696,12 @@ void MainWindow::saveBook1ToFile() {
 
         out << service << ";" << price << ";" << duration << ";" << id << "\n";
 
-        main_loger.enqueue(QString("Book1 write to file: row %1 writen").arg(QVariant::fromValue(row).toString()));
+        main_loger.enqueue(QString("Файл: обработана строка %1").arg(QVariant::fromValue(row).toString()));
         updateLogs();
     }
 
     file.close();
-    main_loger.enqueue(QString("Book1 write to file: finished writing in file"));
+    main_loger.enqueue(QString("Файл: запись закончена"));
     updateLogs();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }
@@ -691,7 +710,7 @@ void MainWindow::saveBook2ToFile() {
     QString fileName = QFileDialog::getSaveFileName(this, "Сохранить записи", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Book2 create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
@@ -700,13 +719,13 @@ void MainWindow::saveBook2ToFile() {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
-        main_loger.enqueue(QString("Book2 create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
     QTextStream out(&file);
     out.setCodec("UTF-8");
-    main_loger.enqueue(QString("Book2 write to file: start writing in file"));
+    main_loger.enqueue(QString("Файл: запись начата"));
     updateLogs();
     for (int row = 0; row < ui->Book2->rowCount(); ++row) {
         QString service = ui->Book2->item(row, 0)->text();
@@ -716,12 +735,12 @@ void MainWindow::saveBook2ToFile() {
         QString id = ui->Book2->item(row, 4)->text();
 
         out << service << ";" << customer << ";" << executer << ";" << date << ";" << id << "\n";
-        main_loger.enqueue(QString("Book2 write to file: row %1 writen").arg(QVariant::fromValue(row).toString()));
+        main_loger.enqueue(QString("Файл: обработана строка %1").arg(QVariant::fromValue(row).toString()));
         updateLogs();
     }
 
     file.close();
-    main_loger.enqueue(QString("Book2 write to file: finished writing in file"));
+    main_loger.enqueue(QString("Файл: запись закончена"));
     updateLogs();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }
@@ -730,7 +749,7 @@ void MainWindow::saveResult(){
     QString fileName = QFileDialog::getSaveFileName(this, "Сохранить отчета", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Report create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
@@ -739,13 +758,13 @@ void MainWindow::saveResult(){
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
-        main_loger.enqueue(QString("Report create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
     QTextStream out(&file);
     out.setCodec("UTF-8");
-    main_loger.enqueue(QString("Report write to file: start writing in file"));
+    main_loger.enqueue(QString("Файл: запись начата"));
     updateLogs();
     //"Услуга", "Клиент", "Цена", "Дата", "Мастер", "Длительность"
     for (int row = 0; row < ui->reportTable->rowCount(); ++row) {
@@ -757,12 +776,12 @@ void MainWindow::saveResult(){
         QString duration = ui->reportTable->item(row, 5)->text();
 
         out << service << ";" << customer << ";" <<price<< ";" << date << ";" << executer << ";" << duration << "\n";
-        main_loger.enqueue(QString("Report write to file: row %1 writen").arg(QVariant::fromValue(row).toString()));
+        main_loger.enqueue(QString("Файл: обработана строка %1").arg(QVariant::fromValue(row).toString()));
         updateLogs();
     }
 
     file.close();
-    main_loger.enqueue(QString("Report write to file: finished writing in file"));
+    main_loger.enqueue(QString("Файл: запись закончена"));
     updateLogs();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }
@@ -771,7 +790,7 @@ void MainWindow::saveLogs(){
     QString fileName = QFileDialog::getSaveFileName(this, "Сохранить события", "", "Текстовые файлы (*.txt);;Все файлы (*)");
     if (fileName.isEmpty())
     {
-        main_loger.enqueue(QString("Logs create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
@@ -780,12 +799,12 @@ void MainWindow::saveLogs(){
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
-        main_loger.enqueue(QString("Logs create file: create failure"));
+        main_loger.enqueue(QString("Файл: ошибка сохранения"));
         updateLogs();
         return;
     }
 
-    main_loger.enqueue(QString("Logs write to file: start writing in file"));
+    main_loger.enqueue(QString("Файл: запись начата"));
     updateLogs();
 
     QTextStream out(&file);
@@ -794,9 +813,32 @@ void MainWindow::saveLogs(){
     QString logs = ui->logs->toPlainText();
     out <<logs;
     file.close();
-    main_loger.enqueue(QString("Logs write to file: finished writing in file"));
+    main_loger.enqueue(QString("Файл: запись закончена"));
     updateLogs();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
+}
+
+void MainWindow::printAppointmentTree() {
+    QString treeContent = appointment_tree.printTree();
+    ui->logs->appendPlainText(treeContent);
+    main_loger.enqueue("AVL-дерево: дерево записей напечатано");
+    updateLogs();
+}
+
+void MainWindow::printDateTree() {
+    QString treeContent = date_tree.printTree();
+
+    ui->logs->appendPlainText(treeContent);
+    main_loger.enqueue("AVL-дерево: дерево дат напечатано");
+    updateLogs();
+}
+
+void MainWindow::printHT() {
+    QString htContent = ht.print();
+    ui->logs->appendPlainText(htContent);
+    main_loger.enqueue("Хеш-таблица: таблица услуг напечатана"
+);
+    updateLogs();
 }
 
 void MainWindow::on_reportmakeButton_clicked()

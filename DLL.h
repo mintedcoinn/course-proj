@@ -3,6 +3,7 @@
 #include <QString>
 #include <QQueue>
 #include <QVariant>
+#include <QTextStream>
 template <typename T>
 class DLL {
 private:
@@ -54,17 +55,20 @@ public:
             newNode->prev = tail;
             tail = newNode;
         }
-        loger.enqueue(QString("DLL insert: insert value: %1").arg(QVariant::fromValue(value).toString()));
+        loger.enqueue(QString("Список: добавлено значение %1").arg(QVariant::fromValue(value).toString()));
         node_count++;
     }
 
-    void print() const {
+    QString print() const {
+        QString out;
+        QTextStream stream(&out);
         Node* current = head;
         while (current) {
-            std::cout << current->data << " ";
+            stream << current->data << " ";
             current = current->next;
         }
-        std::cout << std::endl;
+        stream << "\n";
+        return out;
     }
 
     void clear() {
@@ -77,7 +81,8 @@ public:
         head = nullptr;
         tail = nullptr;
         node_count = 0;
-        loger.enqueue(QString("DLL clear: clear succsessfull"));
+        loger.enqueue(QString("Список: очистка завершена"
+));
     }
 
     void removeValue(T value) {
@@ -102,26 +107,26 @@ public:
                 current = current->next;
                 delete toDelete;
                 node_count--;
-                loger.enqueue(QString("DLL remove: value: %1 removed").arg(QVariant::fromValue(value).toString()));
+                loger.enqueue(QString("Список: значение %1 удалено").arg(QVariant::fromValue(value).toString()));
                 removed = true;
             }
             else {
                 current = current->next;
             }
         }
-        if (!removed) loger.enqueue(QString("DLL remove: value: %1 not found").arg(QVariant::fromValue(value).toString()));
+        if (!removed) loger.enqueue(QString("Список: значение %1 не найдено").arg(QVariant::fromValue(value).toString()));
     }
 
     bool find(T value)  {
         Node* current = head;
         while (current) {
             if (current->data == value) {
-                loger.enqueue(QString("DLL search: value: %1 found").arg(QVariant::fromValue(value).toString()));
+                loger.enqueue(QString("Список: значение %1 найдено").arg(QVariant::fromValue(value).toString()));
                 return true;
             }
             current = current->next;
         }
-        loger.enqueue(QString("DLL search: value: %1 not found").arg(QVariant::fromValue(value).toString()));
+        loger.enqueue(QString("Список: значение %1 не найдено").arg(QVariant::fromValue(value).toString()));
         return false;
     }
     

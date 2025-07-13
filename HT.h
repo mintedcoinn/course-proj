@@ -7,6 +7,7 @@
 #include <QString>
 #include <QVariant>
 #include <QQueue>
+#include <QTextStream>
 
 using namespace std;
 template <typename K, typename V>
@@ -94,16 +95,16 @@ public:
 
             if (table[idx].status == 0) {
                 table[idx] = {key, value, 1 };
-                loger.enqueue(QString("HashTable insert: insert key: %1 value: %2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
+                loger.enqueue(QString("Хеш-таблица: добавлен ключ %1, значение %2").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
                 return true;
             }
 
             if (table[idx].key == key) {
-                loger.enqueue(QString("HashTable insert: key %1 already exist").arg(QVariant::fromValue(key).toString()));
+                loger.enqueue(QString("Хеш-таблица: ключ %1 уже существует").arg(QVariant::fromValue(key).toString()));
                 return false;
             }
         }
-         loger.enqueue(QString("HashTable insert: insert failure (table overload)").arg(QVariant::fromValue(key).toString()));
+         loger.enqueue(QString("Хеш-таблица: ошибка вставки (переполнение)").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -116,16 +117,16 @@ public:
             int idx = line_adresation(h, i);
 
             if (table[idx].status == 0) {
-                loger.enqueue(QString("HashTable search: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+                loger.enqueue(QString("Хеш-таблица: ключ %1 не найден").arg(QVariant::fromValue(key).toString()));
                 return false;
             }
             if (table[idx].status == 1 && table[idx].key == key) {
                 if (found_value) *found_value = table[idx].value;
-                 loger.enqueue(QString("HashTable search: key: %1 found").arg(QVariant::fromValue(key).toString()));
+                 loger.enqueue(QString("Хеш-таблица: ключ %1 найден").arg(QVariant::fromValue(key).toString()));
                 return true;
             }
         }
-        loger.enqueue(QString("HashTable search: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+        loger.enqueue(QString("Хеш-таблица: ключ %1 не найден").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
@@ -136,7 +137,7 @@ public:
             int idx = line_adresation(h, i);
 
             if (table[idx].status == 0) {
-                 loger.enqueue(QString("HashTable remove: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+                 loger.enqueue(QString("Хеш-таблица: ключ %1 не найден").arg(QVariant::fromValue(key).toString()));
                 return false;
             }
 
@@ -154,21 +155,34 @@ public:
                         table[jdx].value = V{};
                     }
                 }
-                loger.enqueue(QString("HashTable remove: key: %1 value: %2 removed succsessfull").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
+                loger.enqueue(QString("Хеш-таблица: ключ %1, значение %2 успешно удалено").arg(QVariant::fromValue(key).toString()).arg(QVariant::fromValue(value).toString()));
                 return true;
             }
         }
-        loger.enqueue(QString("HashTable remove: key: %1 not found").arg(QVariant::fromValue(key).toString()));
+        loger.enqueue(QString("Хеш-таблица: ключ %1 не найден").arg(QVariant::fromValue(key).toString()));
         return false;
     }
 
     
-    void print() const {
+    QString print() const {
+        QString htContent;
+        QTextStream stream(&htContent);
+
+        stream << "Размер: " << size << "\n";
+
+        bool isEmpty = true;
         for (int i = 0; i < size; ++i) {
             if (table[i].status == 1) {
-                cout << " " << i << ":\n";
-                table[i].value.print();
+                isEmpty = false;
+                stream << "Ячейка " << i << ": ";
+                stream << "Ключ: " << table[i].key << ", ";
+                stream << "Значение: " << table[i].value << "\n";
             }
         }
+
+        if (isEmpty) {
+            stream << "Хэш-таблица пуста.\n";
+        }
+        return htContent;
     }
 };

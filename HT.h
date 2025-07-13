@@ -71,17 +71,17 @@ public:
         return false;
     }
 
-    bool search(K& key, V& found_value, int& steps= 0) const {
+    bool search(K& key, V* found_value = nullptr, int* steps= nullptr) const {
         unsigned int h = hash(key);
-        steps = 0;
-        found_value = -1;
+        if (steps) *steps = 0;
+         if (found_value) *found_value = -1;
         for (int i = 0; i < size; ++i) {
-            steps++;
+            if (steps)*steps++;
             int idx = line_adresation(h, i);
 
             if (table[idx].status == 0) return false;
             if (table[idx].status == 1 && table[idx].key == key) {
-                found_value = table[idx].value;
+                if (found_value) *found_value = table[idx].value;
                 return true;
             }
         }

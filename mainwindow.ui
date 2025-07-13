@@ -282,7 +282,7 @@
                 <second>0</second>
                 <year>2025</year>
                 <month>7</month>
-                <day>14</day>
+                <day>12</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -319,7 +319,7 @@
                 <second>0</second>
                 <year>2025</year>
                 <month>7</month>
-                <day>14</day>
+                <day>12</day>
                </datetime>
               </property>
               <property name="displayFormat">
@@ -645,9 +645,17 @@
     <property name="title">
      <string>Файл</string>
     </property>
+    <widget class="QMenu" name="menu">
+     <property name="title">
+      <string>Сохранить</string>
+     </property>
+     <addaction name="saveBook1Action"/>
+     <addaction name="saveBook2Action"/>
+     <addaction name="saveResultAction"/>
+    </widget>
     <addaction name="openBook1Action"/>
     <addaction name="openBook2Action"/>
-    <addaction name="savwFileAction"/>
+    <addaction name="menu"/>
    </widget>
    <widget class="QMenu" name="addMenu">
     <property name="title">
@@ -694,11 +702,6 @@
     <string>Открыть спр2</string>
    </property>
   </action>
-  <action name="savwFileAction">
-   <property name="text">
-    <string>Сохранить отчет</string>
-   </property>
-  </action>
   <action name="findBook1Action">
    <property name="text">
     <string>Спр1</string>
@@ -742,6 +745,21 @@
   <action name="addBook2Action">
    <property name="text">
     <string>Спр2</string>
+   </property>
+  </action>
+  <action name="saveBook1Action">
+   <property name="text">
+    <string>Спр1</string>
+   </property>
+  </action>
+  <action name="saveBook2Action">
+   <property name="text">
+    <string> Спр2</string>
+   </property>
+  </action>
+  <action name="saveResultAction">
+   <property name="text">
+    <string>Отчет</string>
    </property>
   </action>
  </widget>

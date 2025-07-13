@@ -5,6 +5,8 @@
 #include <QTableWidget>
 #include <QAction>
 #include <QDate>
+#include <QFileDialog>
+#include <QTextCodec>
 #include "appointment.h"
 #include "services.h"
 #include "HT.h"
@@ -33,6 +35,7 @@ public:
     int searchInBook(QTableWidget&book,int column, int desired_id);
     bool searchAndPrintBook1(Services &value);
     bool searchAndPrintBook2(Appointment &value);
+
 private slots:
     void openInputDialogBook1();
     void openInputDialogBook2();
@@ -40,6 +43,10 @@ private slots:
     void openInpDelDialogBook2();
     void openInpFinDialogBook1();
     void openInpFinDialogBook2();
+    void openFileBook1();
+    void openFileBook2();
+    void saveBook1ToFile();
+    void saveBook2ToFile();
 
 private:
     Ui::MainWindow *ui;
@@ -49,5 +56,10 @@ private:
     QAction *deleteBook2Action;
     QAction *findBook1Action;
     QAction *findBook2Action;
+    QAction *saveBook1Action;
+    QAction *saveBook2Action;
+    QAction *saveResultAction;
+    QAction *openBook1Action;
+    QAction *openBook2Action;
 };
 #endif // MAINWINDOW_H

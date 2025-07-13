@@ -4,8 +4,7 @@
 Services* book1 = new Services[1000];
 Appointment* book2 = new Appointment[1000];
 HashTable<QString,int> ht(1000);
-int step_counter;
-int found_id;
+
 AVLTree<QString, int> appointment_tree;
 AVLTree<QDate, int> date_tree;
 bool CLEAR_ALL_MENTIONS_OF_SERVICE = false;
@@ -36,6 +35,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(findBook1Action,&QAction::triggered,this,&MainWindow::openInpFinDialogBook1);
     findBook2Action = ui->findBook2Action;
     connect(findBook2Action,&QAction::triggered,this,&MainWindow::openInpFinDialogBook2);
+    saveResultAction = ui->saveResultAction;
+    saveBook1Action =  ui->saveBook1Action;
+    connect(saveBook1Action,&QAction::triggered,this,&MainWindow::saveBook1ToFile);
+    saveBook2Action = ui->saveBook2Action;
+    connect(saveBook2Action,&QAction::triggered,this,&MainWindow::saveBook2ToFile);
+    openBook1Action = ui->openBook1Action;
+    connect(openBook1Action,&QAction::triggered,this,&MainWindow::openFileBook1);
+    openBook2Action = ui->openBook2Action;
+    connect(openBook2Action,&QAction::triggered,this,&MainWindow::openFileBook2);
 }
 
 MainWindow::~MainWindow()
@@ -45,7 +53,7 @@ MainWindow::~MainWindow()
 
 bool MainWindow::addBook1(Services &value)
 {
-    if (ht.search(value.service_name,found_id, step_counter))return false;
+    if (ht.search(value.service_name))return false;
 
     int current_row = ui->Book1->rowCount();
     ui->Book1->insertRow(current_row);
@@ -58,7 +66,7 @@ bool MainWindow::addBook1(Services &value)
     return true;
 }
 bool MainWindow::addBook2(Appointment &value){
-    if (!ht.search(value.service_name,found_id, step_counter))return false;
+    if (!ht.search(value.service_name))return false;
     int current_row = ui->Book2->rowCount();
     ui->Book2->insertRow(current_row);
 
@@ -74,7 +82,7 @@ bool MainWindow::addBook2(Appointment &value){
 
 bool MainWindow::deleteFromBook1(Services &value){
     int idInBook =0;
-    ht.search(value.service_name,idInBook, step_counter);
+    ht.search(value.service_name,&idInBook);
     if (idInBook<0)return false;
     value.id = idInBook;
     int rowInBook = searchInBook(*ui->Book1, 3, idInBook);
@@ -91,7 +99,7 @@ bool MainWindow::deleteFromBook1(Services &value){
 }
 bool MainWindow::deleteFromBook2(Appointment &value){
     int idInBook =0;
-    ht.search(value.service_name,idInBook, step_counter);
+    ht.search(value.service_name,&idInBook);
     if (idInBook<0)return false;
 
     if (CLEAR_ALL_MENTIONS_OF_SERVICE)
@@ -140,7 +148,8 @@ int MainWindow::searchInBook(QTableWidget&book,int column, int desired_id) {
 
 bool MainWindow::searchAndPrintBook1(Services &value){
     int idInBook = 0;
-    ht.search(value.service_name,idInBook, step_counter);
+    int step_counter;
+    ht.search(value.service_name,&idInBook, &step_counter);
     if (idInBook<0) return false;
 
     ui->stepCounter_2->setPlainText(QString::number(step_counter));
@@ -163,10 +172,11 @@ bool MainWindow::searchAndPrintBook1(Services &value){
 
 bool MainWindow::searchAndPrintBook2(Appointment &value){
     int idInBook = 0;
-    ht.search(value.service_name,idInBook, step_counter);
+    ht.search(value.service_name,&idInBook);
     if (idInBook<0) return false;
 
     DLL<int> idInNode;
+    int step_counter;
     if (!appointment_tree.find(value.service_name,idInNode,&step_counter)) return false;
 
     ui->stepCounter_2->setPlainText(QString::number(step_counter));
@@ -225,7 +235,7 @@ void MainWindow::openInpDelDialogBook1(){
     if (dialog.exec() == QDialog::Accepted){
         Services dele_service;
         dele_service.service_name = dialog.getServiceNameInput();
-        if (deleteFromBook1(dele_service))
+        if (!deleteFromBook1(dele_service))
             QMessageBox::warning(this, "Ошибка", "Не удалось удалить");
     }
 }
@@ -262,4 +272,122 @@ void MainWindow::openInpFinDialogBook2(){
         if (!searchAndPrintBook2(find_appointment))
             QMessageBox::warning(this, "Ошибка", "Не удалось найти");
     }
+}
+
+void MainWindow::openFileBook1(){
+    QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл услуг", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось открыть файл.");
+        return;
+    }
+
+    bool ok1;
+    bool ok2;
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        QStringList parts = line.split(";");
+        if (parts.size() >= 3) {
+            Services service;
+            service.service_name = parts[0].trimmed();
+            service.price = parts[1].trimmed().toInt(&ok1);
+            service.duration = parts[2].trimmed().toInt(&ok2);
+
+            if (!(ok1 && ok2 && service.price >0 && service.duration >0)) continue;
+            if (ht.search(service.service_name)) continue;
+            service.id = book1id++;
+            addBook1(service);
+        }
+    }
+    file.close();
+}
+
+void MainWindow::openFileBook2(){
+    QString fileName = QFileDialog::getOpenFileName(this, "Открыть файл записей", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось открыть файл.");
+        return;
+    }
+
+    QTextStream in(&file);
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        QStringList parts = line.split(";");
+        if (parts.size() >= 4) {
+            Appointment appointment;
+            appointment.service_name = parts[0].trimmed();
+            appointment.customer = parts[1].trimmed();
+            appointment.executer = parts[2].trimmed();
+            appointment.date =  QLocale("en_US").toDate(parts[3].trimmed(), "dd.MMM.yyyy");
+
+            if (!ht.search(appointment.service_name)) continue;
+            appointment.id = book2id++;
+            addBook2(appointment);
+        }
+    }
+    file.close();
+}
+
+void MainWindow::saveBook1ToFile() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить услуги", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out.setCodec("UTF-8");
+
+    for (int row = 0; row < ui->Book1->rowCount(); ++row) {
+        QString service = ui->Book1->item(row, 0)->text();
+        QString price = ui->Book1->item(row, 1)->text();
+        QString duration = ui->Book1->item(row, 2)->text();
+        QString id = ui->Book1->item(row, 3)->text();
+
+        out << service << ";" << price << ";" << duration << ";" << id << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
+}
+
+void MainWindow::saveBook2ToFile() {
+    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить записи", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out.setCodec("UTF-8");
+
+    for (int row = 0; row < ui->Book2->rowCount(); ++row) {
+        QString service = ui->Book2->item(row, 0)->text();
+        QString customer = ui->Book2->item(row, 1)->text();
+        QString executer = ui->Book2->item(row, 2)->text();
+        QString date = ui->Book2->item(row, 3)->text();
+        QString id = ui->Book2->item(row, 4)->text();
+
+        out << service << ";" << customer << ";" << executer << ";" << date << ";" << id << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }

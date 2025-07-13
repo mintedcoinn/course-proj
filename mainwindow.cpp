@@ -3,7 +3,7 @@
 
 Services* book1 = new Services[1000];
 Appointment* book2 = new Appointment[1000];
-HashTable<QString,int> ht(1000);
+HashTable<QString,int> ht(100);
 
 AVLTree<QString, int> appointment_tree;
 AVLTree<QDate, int> date_tree;
@@ -17,11 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    //setHTsize();
     ui->Book1->setColumnCount(4);
     ui->Book1->setHorizontalHeaderLabels({"Услуга", "Цена", "Длительность", "ID"});
     ui->Book2->setColumnCount(5);
     ui->Book2->setHorizontalHeaderLabels({"Услуга", "Клиент", "Мастер", "Дата", "ID"});
-
+    ui->reportTable->setColumnCount(6);
+    ui->reportTable->setHorizontalHeaderLabels({"Услуга", "Клиент", "Цена", "Дата", "Мастер", "Длительность"});
 
     addBook1Action = ui->addBook1Action;
     connect(addBook1Action,&QAction::triggered,this,&MainWindow::openInputDialogBook1);
@@ -36,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     findBook2Action = ui->findBook2Action;
     connect(findBook2Action,&QAction::triggered,this,&MainWindow::openInpFinDialogBook2);
     saveResultAction = ui->saveResultAction;
+    connect(saveResultAction,&QAction::triggered,this,&MainWindow::saveResult);
     saveBook1Action =  ui->saveBook1Action;
     connect(saveBook1Action,&QAction::triggered,this,&MainWindow::saveBook1ToFile);
     saveBook2Action = ui->saveBook2Action;
@@ -65,6 +68,7 @@ bool MainWindow::addBook1(Services &value)
     ht.insert(value.id, value.service_name);
     return true;
 }
+
 bool MainWindow::addBook2(Appointment &value){
     if (!ht.search(value.service_name))return false;
     int current_row = ui->Book2->rowCount();
@@ -73,7 +77,7 @@ bool MainWindow::addBook2(Appointment &value){
     ui->Book2->setItem(current_row,0,new QTableWidgetItem(value.service_name));
     ui->Book2->setItem(current_row,1,new QTableWidgetItem(value.customer));
     ui->Book2->setItem(current_row,2,new QTableWidgetItem(value.executer));
-    ui->Book2->setItem(current_row,3,new QTableWidgetItem(value.date.toString("dd.MMM.yyyy")));
+    ui->Book2->setItem(current_row,3,new QTableWidgetItem(QLocale("en_US").toString(value.date, "dd.MMM.yyyy")));
     ui->Book2->setItem(current_row,4, new QTableWidgetItem(QString::number(value.id)));
     appointment_tree.insertValue(value.service_name,value.id);
     date_tree.insertValue(value.date,value.id);
@@ -97,6 +101,7 @@ bool MainWindow::deleteFromBook1(Services &value){
     return true;
 
 }
+
 bool MainWindow::deleteFromBook2(Appointment &value){
     int idInBook =0;
     ht.search(value.service_name,&idInBook);
@@ -203,6 +208,90 @@ bool MainWindow::searchAndPrintBook2(Appointment &value){
     return true;
 }
 
+void MainWindow::createAndShowReport(){
+    QString customer = ui->customerNameReport->toPlainText();
+    QDate start_period = ui->startPeriod->date();
+    QDate end_period = ui->endPeriod->date();
+    bool ok;
+    int price = ui->servisePriceReport->toPlainText().toInt(&ok);
+
+    if (customer.trimmed().isEmpty() || ui->servisePriceReport->toPlainText().trimmed().isEmpty()) {
+        QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
+        return;
+    }
+    if (start_period> end_period){
+        QMessageBox::warning(this, "Ошибка", "Начальная дата больше конченой");
+        return;
+    }
+
+    if (!ok)
+    {
+        QMessageBox::warning(this, "Ошибка", "Цена является целочисленным показателем");
+        return;
+    }
+
+    ui->reportTable->clearContents();
+    ui->reportTable->setRowCount(0);
+
+    DLL<int> services_id;
+    DLL<pair<QString, int>> namesFromId;
+
+    for (QDate date = start_period; date <= end_period; date = date.addDays(1)){
+        DLL<int> listId;
+        if (!date_tree.find(date,listId)) continue;
+
+        DLL<int> temp;
+        temp = listId;
+        while (!temp.isEmpty())
+        {
+            int rowInBook2 = searchInBook(*ui->Book2,4,temp.getHead()->data);
+            QTableWidgetItem *item = ui->Book2->item(rowInBook2,1);
+            QString appo_cutomer = item->text();
+            if (appo_cutomer == customer){
+                services_id.append(temp.getHead()->data);
+            }
+            temp.removeValue(temp.getHead()->data);
+        }
+        temp.clear();
+    }
+
+    while (!services_id.isEmpty()){
+        int rowInBook2 = searchInBook(*ui->Book2,4,services_id.getHead()->data);
+        QTableWidgetItem *item = ui->Book2->item(rowInBook2,0);
+        QString service_name = item->text();
+        namesFromId.append(make_pair(service_name, services_id.getHead()->data));
+        services_id.removeValue(services_id.getHead()->data);
+    }
+
+    services_id.clear();
+
+    while (!namesFromId.isEmpty()){
+        int idInBook1 =0;
+
+        if (!ht.search(namesFromId.getHead()->data.first, &idInBook1)){
+            namesFromId.removeValue(namesFromId.getHead()->data);
+            continue;
+        }
+        int rowInBook1 = searchInBook(*ui->Book1, 3, idInBook1);
+        QTableWidgetItem *item = ui->Book1->item(rowInBook1,1);
+        int serv_price = item->text().toInt();
+
+        if (serv_price == price){
+            int rowInBook2 = searchInBook(*ui->Book2,4,namesFromId.getHead()->data.second);
+            int current_row = ui->reportTable->rowCount();
+            ui->reportTable->insertRow(current_row);
+            //"Услуга", "Клиент", "Цена", "Дата", "Мастер", "Длительность"
+            ui->reportTable->setItem(current_row, 0, ui->Book1->item(rowInBook1,0)->clone());
+            ui->reportTable->setItem(current_row, 1, ui->Book2->item(rowInBook2,1)->clone());
+            ui->reportTable->setItem(current_row, 2, ui->Book1->item(rowInBook1,1)->clone());
+            ui->reportTable->setItem(current_row, 3, ui->Book2->item(rowInBook2,3)->clone());
+            ui->reportTable->setItem(current_row, 4, ui->Book2->item(rowInBook2,2)->clone());
+            ui->reportTable->setItem(current_row, 5, ui->Book1->item(rowInBook1,2)->clone());
+        }
+        namesFromId.removeValue(namesFromId.getHead()->data);
+    }
+    namesFromId.clear();
+}
 void MainWindow::openInputDialogBook1(){
     inputDialogBook1 dialog(this);
     if (dialog.exec() == QDialog::Accepted){
@@ -215,6 +304,7 @@ void MainWindow::openInputDialogBook1(){
             QMessageBox::warning(this, "Ошибка", "Не удалось вставить");
     }
 }
+
 void MainWindow::openInputDialogBook2(){
     InputDialogBook2 dialog(this);
     if (dialog.exec() == QDialog::Accepted){
@@ -229,6 +319,7 @@ void MainWindow::openInputDialogBook2(){
             QMessageBox::warning(this, "Ошибка", "Не удалось вставить");
     }
 }
+
 void MainWindow::openInpDelDialogBook1(){
     inputDialogBook1 dialog(this);
     dialog.usingAsDelInput();
@@ -391,3 +482,51 @@ void MainWindow::saveBook2ToFile() {
     file.close();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }
+
+void MainWindow::saveResult(){
+    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить отчета", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
+        return;
+    }
+
+    QTextStream out(&file);
+    out.setCodec("UTF-8");
+    //"Услуга", "Клиент", "Цена", "Дата", "Мастер", "Длительность"
+    for (int row = 0; row < ui->reportTable->rowCount(); ++row) {
+        QString service = ui->reportTable->item(row, 0)->text();
+        QString customer = ui->reportTable->item(row, 1)->text();
+        QString price = ui->reportTable->item(row, 2)->text();
+        QString date = ui->reportTable->item(row, 3)->text();
+        QString executer = ui->reportTable->item(row, 4)->text();
+        QString duration = ui->reportTable->item(row, 5)->text();
+
+        out << service << ";" << customer << ";" <<price<< ";" << date << ";" << executer << ";" << duration << "\n";
+    }
+
+    file.close();
+    QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
+}
+
+void MainWindow::on_reportmakeButton_clicked()
+{
+    createAndShowReport();
+}
+
+//void MainWindow::setHTsize() {
+ //   HT_input dialog(this);
+  //  if (dialog.exec() == QDialog::Accepted) {
+  //      int size = dialog.getHTSizeInput().toInt();
+   //     if (size > 0) {
+     //       ht = HashTable<QString, int>(size);
+     //       QMessageBox::information(this, "Успех",
+      //                               QString("Хэш-таблица создана с размером %1").arg(size));
+      //  } else {
+       //     QMessageBox::warning(this, "Ошибка", "Размер должен быть положительным");
+//setHTsize();
+ //       }
+  //  }
+//}

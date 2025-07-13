@@ -202,7 +202,7 @@
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
            </property>
-           <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,2,2">
+           <layout class="QGridLayout" name="gridLayout" rowstretch="1,1,2,2,0">
             <property name="leftMargin">
              <number>0</number>
             </property>
@@ -225,34 +225,15 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2">
-             <widget class="QPlainTextEdit" name="customerName">
-              <property name="maximumSize">
-               <size>
-                <width>400</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="verticalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="horizontalScrollBarPolicy">
-               <enum>Qt::ScrollBarAlwaysOff</enum>
-              </property>
-              <property name="undoRedoEnabled">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QLabel" name="label_9">
+            <item row="1" column="1">
+             <widget class="QLabel" name="label_7">
               <property name="text">
-               <string>Конец периода</string>
+               <string>Цена услуги</string>
               </property>
              </widget>
             </item>
             <item row="1" column="2">
-             <widget class="QPlainTextEdit" name="servisePrice">
+             <widget class="QPlainTextEdit" name="servisePriceReport">
               <property name="maximumSize">
                <size>
                 <width>400</width>
@@ -270,8 +251,37 @@
               </property>
              </widget>
             </item>
+            <item row="3" column="0">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="0">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
             <item row="3" column="2">
              <widget class="QDateEdit" name="endPeriod">
+              <property name="locale">
+               <locale language="English" country="UnitedStates"/>
+              </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
               </property>
@@ -290,22 +300,18 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_6">
+            <item row="3" column="1">
+             <widget class="QLabel" name="label_9">
               <property name="text">
-               <string>ФИО клиента</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Цена услуги</string>
+               <string>Конец периода</string>
               </property>
              </widget>
             </item>
             <item row="2" column="2">
              <widget class="QDateEdit" name="startPeriod">
+              <property name="locale">
+               <locale language="English" country="UnitedStates"/>
+              </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::NoButtons</enum>
               </property>
@@ -340,34 +346,54 @@
               </property>
              </spacer>
             </item>
-            <item row="2" column="0">
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>ФИО клиента</string>
               </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="3" column="0">
-             <spacer name="horizontalSpacer_4">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
+             </widget>
             </item>
             <item row="1" column="0">
              <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="0" column="2">
+             <widget class="QPlainTextEdit" name="customerNameReport">
+              <property name="maximumSize">
+               <size>
+                <width>400</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="verticalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="undoRedoEnabled">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QPushButton" name="reportmakeButton">
+              <property name="text">
+               <string>Подготовить отчет</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <spacer name="horizontalSpacer">
               <property name="orientation">
                <enum>Qt::Horizontal</enum>
               </property>
@@ -439,7 +465,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QTableWidget" name="resultsTable">
+             <widget class="QTableWidget" name="reportTable">
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>
               </property>

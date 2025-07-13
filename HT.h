@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream> 
 #include <string>
+#include <fstream>
 #include <algorithm>
 #include <type_traits>
 #include <QString>
@@ -40,7 +41,7 @@ class HashTable {
     }
 
 public:
-    HashTable(unsigned int sz) : size(sz) {
+    HashTable(unsigned int sz = 0) : size(sz) {
 
         table = new Entry[size];
 
@@ -51,6 +52,38 @@ public:
 
     ~HashTable() {
         delete[] table;
+    }
+
+    HashTable(const HashTable& other) : size(other.size) {
+        table = new Entry[size];
+        for (int i = 0; i < size; ++i) {
+            table[i] = other.table[i];
+        }
+    }
+
+    HashTable& operator=(HashTable other) {
+        swap(*this, other);
+        return *this;
+    }
+
+    HashTable(HashTable&& other) noexcept : size(0), table(nullptr) {
+        swap(*this, other);
+    }
+
+    HashTable& operator=(HashTable&& other) noexcept {
+        if (this != &other) {
+            delete[] table;
+            size = 0;
+            table = nullptr;
+            swap(*this, other);
+        }
+        return *this;
+    }
+
+    friend void swap(HashTable& first, HashTable& second) noexcept {
+        using std::swap;
+        swap(first.size, second.size);
+        swap(first.table, second.table);
     }
 
     bool insert(const V& value, const K& key) {

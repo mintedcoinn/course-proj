@@ -9,7 +9,7 @@ private:
         Node* next;
         Node(T value) : data(value), prev(nullptr), next(nullptr) {}
     };
-    int node_count;
+    int node_count = 0;
     Node* head;
     Node* tail;
 public:
@@ -33,6 +33,7 @@ public:
                 append(current->data);
                 current = current->next;
             }
+            this->node_count = other.node_count;
         }
         return *this;
     }

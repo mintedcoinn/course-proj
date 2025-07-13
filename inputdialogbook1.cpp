@@ -26,6 +26,25 @@ void inputDialogBook1::on_BackButton_clicked()
     this->reject();
 }
 bool inputDialogBook1::CheckCorrectInput(){
+    if (ht_sizibg){
+        if (price_input.trimmed().isEmpty()) {
+            QMessageBox::warning(this, "Ошибка", "Заполните размер Хеш-Таблицы числами больше 0");
+            return false;
+        }
+        bool price_int_and_correct;
+        int temp = price_input.toInt(&price_int_and_correct);
+
+        if (!price_int_and_correct) {
+            QMessageBox::warning(this, "Ошибка", "Заполните размер Хеш-Таблицы числами больше 0");
+            return false;
+        }
+        if( temp <= 0){
+            QMessageBox::warning(this, "Ошибка", "Заполните размер Хеш-Таблицы числами больше 0");
+            return false;
+        }
+
+        return true;
+    }
     if (fields_hided){
         if (service_input.trimmed().isEmpty()) {
             QMessageBox::warning(this, "Ошибка", "Все поля должны быть заполнены");
@@ -70,6 +89,14 @@ void inputDialogBook1::usingAsDelInput(){
     ui->label_2->hide();
     ui->label_3->hide();
     fields_hided = true;
+}
+
+void inputDialogBook1::htInput(){
+    ui->serviceNameInput->hide();
+    ui->durationInput->hide();
+    ui->label->hide();
+    ui->label_3->hide();
+    ht_sizibg = true;
 }
 
 QString inputDialogBook1::getServiceNameInput(){

@@ -7,6 +7,7 @@
 #include <QDate>
 #include <QFileDialog>
 #include <QTextCodec>
+#include <utility>
 #include "appointment.h"
 #include "services.h"
 #include "HT.h"
@@ -14,6 +15,7 @@
 #include "AVLTree.h"
 #include "inputdialogbook1.h"
 #include "inputdialogbook2.h"
+#include "ht_input.h"
 #include <QDebug>
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -35,6 +37,8 @@ public:
     int searchInBook(QTableWidget&book,int column, int desired_id);
     bool searchAndPrintBook1(Services &value);
     bool searchAndPrintBook2(Appointment &value);
+    void createAndShowReport();
+    //void setHTsize();
 
 private slots:
     void openInputDialogBook1();
@@ -47,6 +51,8 @@ private slots:
     void openFileBook2();
     void saveBook1ToFile();
     void saveBook2ToFile();
+    void saveResult();
+    void on_reportmakeButton_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -61,5 +67,6 @@ private:
     QAction *saveResultAction;
     QAction *openBook1Action;
     QAction *openBook2Action;
+
 };
 #endif // MAINWINDOW_H

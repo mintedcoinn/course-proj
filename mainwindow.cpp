@@ -18,7 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    QApplication::setWindowIcon(QIcon(":/coursach.ico"));
+    this->setWindowTitle("Салон Красоты");
     setHTsize();
     ui->Book1->setColumnCount(4);
     ui->Book1->setHorizontalHeaderLabels({"Услуга", "Цена", "Длительность", "ID"});
@@ -49,6 +50,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(openBook1Action,&QAction::triggered,this,&MainWindow::openFileBook1);
     openBook2Action = ui->openBook2Action;
     connect(openBook2Action,&QAction::triggered,this,&MainWindow::openFileBook2);
+    saveLogsAction = ui->saveLogsAction;
+    connect(saveLogsAction,&QAction::triggered,this,&MainWindow::saveLogs);
 }
 
 MainWindow::~MainWindow()
@@ -654,7 +657,7 @@ void MainWindow::saveBook1ToFile() {
     }
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
         main_loger.enqueue(QString("Book1 create file: create failure"));
@@ -694,7 +697,7 @@ void MainWindow::saveBook2ToFile() {
     }
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
         main_loger.enqueue(QString("Book2 create file: create failure"));
@@ -733,7 +736,7 @@ void MainWindow::saveResult(){
     }
 
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
     {
         QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
         main_loger.enqueue(QString("Report create file: create failure"));
@@ -760,6 +763,38 @@ void MainWindow::saveResult(){
 
     file.close();
     main_loger.enqueue(QString("Report write to file: finished writing in file"));
+    updateLogs();
+    QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
+}
+
+void MainWindow::saveLogs(){
+    QString fileName = QFileDialog::getSaveFileName(this, "Сохранить события", "", "Текстовые файлы (*.txt);;Все файлы (*)");
+    if (fileName.isEmpty())
+    {
+        main_loger.enqueue(QString("Logs create file: create failure"));
+        updateLogs();
+        return;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this, "Ошибка", "Не удалось создать файл.");
+        main_loger.enqueue(QString("Logs create file: create failure"));
+        updateLogs();
+        return;
+    }
+
+    main_loger.enqueue(QString("Logs write to file: start writing in file"));
+    updateLogs();
+
+    QTextStream out(&file);
+    out.setCodec("UTF-8");
+
+    QString logs = ui->logs->toPlainText();
+    out <<logs;
+    file.close();
+    main_loger.enqueue(QString("Logs write to file: finished writing in file"));
     updateLogs();
     QMessageBox::information(this, "Успех", "Файл сохранён: " + fileName);
 }

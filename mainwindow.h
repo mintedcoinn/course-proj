@@ -54,6 +54,7 @@ private slots:
     void saveBook1ToFile();
     void saveBook2ToFile();
     void saveResult();
+    void saveLogs();
     void on_reportmakeButton_clicked();
 
 private:
@@ -69,6 +70,7 @@ private:
     QAction *saveResultAction;
     QAction *openBook1Action;
     QAction *openBook2Action;
+    QAction *saveLogsAction;
 
 };
 #endif // MAINWINDOW_H

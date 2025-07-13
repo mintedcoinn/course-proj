@@ -8,7 +8,7 @@ HT_input::HT_input(QWidget *parent)
     , ui(new Ui::HT_input)
 {
     ui->setupUi(this);
-
+this->setWindowTitle("Укажите размер хэш-таблицы");
     ui->lineEdit->setPlaceholderText("Введите число 1-10000");
 }
 

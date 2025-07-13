@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>coursach.ico</file>
+    </qresource>
+</RCC>

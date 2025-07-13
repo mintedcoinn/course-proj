@@ -18,7 +18,6 @@ public:
     QString getPriceInput();
     QString getDurationInput();
     void usingAsDelInput();
-    void htInput();
 private slots:
 
     void on_OKButton_clicked();
@@ -27,7 +26,6 @@ private slots:
 
 private:
     bool fields_hided = false;
-    bool ht_sizibg = false;
     Ui::inputDialogBook1 *ui;
     QString service_input;
     QString price_input;

@@ -6,6 +6,7 @@ InputDialogBook2::InputDialogBook2(QWidget *parent)
     , ui(new Ui::InputDialogBook2)
     {
         ui->setupUi(this);
+        this->setWindowTitle("Окно ввода справочника2");
     }
 
 InputDialogBook2::~InputDialogBook2()

@@ -53,6 +53,7 @@ else()
         add_executable(coursach
             ${PROJECT_SOURCES}
             ht_input.h ht_input.cpp ht_input.ui
+            sourceee.qrc
         )
     endif()
 endif()

@@ -678,6 +678,7 @@
      <addaction name="saveBook1Action"/>
      <addaction name="saveBook2Action"/>
      <addaction name="saveResultAction"/>
+     <addaction name="saveLogsAction"/>
     </widget>
     <addaction name="openBook1Action"/>
     <addaction name="openBook2Action"/>
@@ -786,6 +787,11 @@
   <action name="saveResultAction">
    <property name="text">
     <string>Отчет</string>
+   </property>
+  </action>
+  <action name="saveLogsAction">
+   <property name="text">
+    <string>События</string>
    </property>
   </action>
  </widget>
